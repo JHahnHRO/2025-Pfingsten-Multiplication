@@ -1,0 +1,171 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Das Problem}
+
+\begin{remark}
+    Wir wollen effizient multiplizieren. Was \enquote{effizient} heißt, hängt von der Problemstellung ab. Konkret ist unser Problem folgendes:
+
+    \medskip
+    Gegeben zwei natürliche Zahlen $A,B$, dargestellt durch ihre $n$ Ziffern in Basis $g$
+    \[A=\sum_{i=0}^{n-1} a_i g^i,\quad B=\sum_{i=0}^{n-1} b_i g^i\]
+    mit $0\leq a_i,b_i<g$, berechne die Ziffern $c_0, c_1, \ldots, c_{2n-1}$ des Produkts $C:=A\cdot B$.
+
+    \medskip
+    Wir messen die Laufzeit von Multiplikationsalgorithmen in Abhängigkeit von $n$. Wir nehmen an, dass Operationen auf einzelnen Ziffern eine konstante Laufzeit haben.
+\end{remark}
+
+\begin{remark}
+    Die Annahme, dass Operationen mit einzelnen Ziffern eine konstante Laufzeit haben, ist in der Theorie dadurch gerechtfertigt, dass man eine Additions- und Multiplikationstabelle vorberechnen kann. Dann hat jede Addition oder Multiplikation von zwei Ziffern die Laufzeit von \enquote{Schau einen Eintrag in eine $n\times n$ Tabelle nach}.
+
+    So funktionierte das letztendlich auch in der Grundschule. Das Einmaleins haben wir auswendig gelernt und schriftliches Addieren und Multiplizieren von größeren Zahlen nutzt den \enquote{Lookup} im Gedächtnis.
+\end{remark}
+
+\begin{remark}
+    In Computerhardware sind i.A.\ keine Lookup-Tabellen implementiert. Die offensichtliche Wahl der Basis wäre $g=2$. Die Addition und Multiplikation von einzelnen Bits sind einfach\footnote{Wie \enquote{einfach} es auch sein mag, wenige hundert Atome große Schaltkreise zu bauen...} direkt in Hardware zu implementieren, sodass kein Lookup nötig ist.
+
+    \smallskip
+    Etwas weniger offensichtlich ist es, auf \enquote{Wörtern} statt Bits zu arbeiten, d.h. $g=2^8$, $2^{16}$ (richtig alte Hardware), $2^{32}$ (alte Hardware und einige moderne Mobilgeräte) oder $2^{64}$ (moderne Hardware, insb. PCs) zu wählen. Manche Hardware unterstützt sogar noch höhere Wortgrößen.
+
+    \smallskip
+    Während Speicher für eine $256\times 256$ große Tabelle mit je $\SI{2}{\byte}$ großen Einträgen sicher noch verkraftbar wäre, ist eine $2^{32}\times 2^{32}$ Tabelle schon zu groß und eine $2^{64}\times 2^{64}$  Lookup-Tabelle völlig unrealistisch: $2^{64}$ viele $\SI{64}{\bit}$ große Einträge sind $\SI{1.476e8}{\tera\byte}$ und $2^{128}$ viele $\SI{128}{\bit}$ große Einträge sind $\approx \SI{5.445e27}{\tera\byte}$. Kein Datacenter der Welt hat diese Kapazität! Das ist ein Vielfaches der Gesamtgröße des Internets.
+
+    \smallskip
+    Also wird auch in diesen Fällen das Ergebnis einer einzelnen Multiplikation mit einer speziellen Instruktion direkt von der Hardware berechnet. Die Schaltkreise sind allerdings schon deutlich komplexer. Und in der Tat sind die Schaltkreise für größere Wörter i.d.R.\ zusammengesetzt aus Schaltkreisen, die Addition und Multiplikation kleinerer Wörter implementieren, d.h.\ es wird ein passender Multiplikationsalgorithmus in Hardware implementiert.
+
+    \smallskip
+    Solange alle Multiplikation von zwei Wörtern stets durch den gleichen Schaltkreis ermittelt wird, kann aber ebenfalls davon ausgegangen werden, dass die Laufzeitkosten konstant sind.
+
+    \medskip
+    Es ist jedoch nicht unbedingt klar, dass die beiden Schaltkreise für Addition und Multiplikation gleich schnell operieren. In der Tat war auf echter Hardware lange ein deutlicher Unterschied zwischen den Laufzeiten einer Additions- und einer Multiplikationsinstruktion vorhanden. Teilweise war Multiplikation eine Größenordnung langsamer als Addition. Aus diesem Grund hat es sich auch in der theoretischen Analyse eingebürgert, nicht alle Operationen eines Multiplikationsalgorithmus zu zählen, sondern nur die Multiplikationen, weil diese mehr ins Gewicht fallen. Wir werden dieser Tradition auch folgen, aber soweit möglich trotzdem Buchführen, wie viele Additionen ein Algorithmus jeweils benötigt.
+\end{remark}
+
+\begin{remark}
+    Der offensichtliche Algorithmus für Multiplikation beliebiger natürlicher Zahlen ergibt sich direkt durch Anwendung des Distributivgesetzes:
+    \[\left(\sum_{i=0}^{n-1}\ a_i g^i \right)\cdot\left(\sum_{i=0}^{n-1} b_i g^i\right) = \sum_{i,j} (a_i b_j) g^{i+j} = \sum_{k=0}^{2n-1} \left(\sum_{i+j=k}a_i b_j\right)g^k\]
+    Indem wir alle $n^2$ Produkte $a_i b_j$ berechnen und geeignet aufsummieren, erhalten wir das Produkt $A\cdot B$.
+
+    \medskip
+    In der Grundschule lernt man meist ein tabellarisches Verfahren, das schematisch in etwa so abläuft, dass in jeder Zeile das Produkt einer einzelnen Ziffer $a_i$ von $A$ mit $B$ ausgerechnet wird, um $i$ viele Dezimalstellen verschoben wird (was die Multiplikation mit $10^i$ darstellt), sowie am Ende alle Zeilen aufsummiert werden.
+
+    \smallskip
+    In jeder Zeile werden dafür die Produkte $a_i\cdot b_j$ ausgerechnet. Grob vereinfacht würde das also so aussehen:
+
+    \[\begin{array}{c c c c c c c c}
+        a_2 & a_1 & a_0     & \cdot   & b_3     & b_2     & b_1     & b_0     \\
+        \hline
+        &     &         &         & a_0 b_3 & a_0 b_2 & a_0 b_1 & a_0 b_0 \\
+        &     &         & a_1 b_3 & a_1 b_2 & a_1 b_1 & a_1 b_0 & 0       \\
+        &     & a_2 b_3 & a_2 b_2 & a_2 b_1 & a_2 b_0 & 0       & 0       \\
+        \hline
+        & c_6 & c_5     & c_4     & c_3     & c_2     & c_1     & c_0
+    \end{array}\]
+
+    Natürlich sind die Produkte $a_i\cdot b_j$ der einzelnen Ziffern i.A.\ größer als eine Ziffer, sodass man in jeder Zeile und von einer Zeile zur nächsten jeweils die Überträge beachten muss.
+\end{remark}
+
+\begin{algorithm}[Schriftliches Multiplizieren]
+    \label{alg:slow_multiplication}
+    Wir benutzen die Schulmethode direkt. Einziger Unterschied ist, dass wir ein laufendes Zwischenergebnis pflegen und dies kontinuierlich updaten, anstatt $n$ viele Zwischenergebnisse zu speichern und erst am Ende alle aufzuaddieren.
+
+    %! suppress = MissingLabel
+    \begin{lstlisting}
+    Array<Digit> multiply(Array<Digit> a, Array<Digit> b){
+      // initialize with a.length + b.length zeros
+      Array<Digit> c := {0,0,...,0};
+
+      for(i := 0; i<a.length; i++){
+        Digit z := 0;
+
+        for(j := 0; j<b.length; j++){
+          // p := c[i+j] + a_i * b_j + z is at most a 2-digit number !!
+          Digits {p_1,p_0} := c[i+j] + a[i] * b[j] + z;
+
+          c[i+j]    := p_0;
+          z         := p_1;
+        }
+        c[i + b.length] := z;
+      }
+
+      return c;
+    }
+    \end{lstlisting}
+\end{algorithm}
+
+\begin{proposition}[Korrektheit]
+    Der Algorithmus~\ref{alg:slow_multiplication} ist korrekt. Er arbeitet in $O(n^2)$ Multiplikation, $O(n^2)$ Additionen und benötigt $O(n)$ Speicher.
+\end{proposition}
+\begin{proof}
+    Das meiste ist relativ klar. Wir beginnen, indem wir $C$ mit den Ziffern $000\ldots 000$ initialisieren. Dann addieren wir für jedes $i$ die Zahl $a_i g^i\cdot B$ zu $C$, indem wir $a_i \cdot B$ berechnen und auf die Ziffern $\ldots c_{i+2}c_{i+1}c_i$ addieren, und speichern das Ergebnis wieder in $C$.
+
+    \smallskip
+    Wir addieren in jeder Iteration der inneren Schleife die 1er Ziffer des Produkts $p:=a_i \cdot b_j$ an die korrekte Stelle $c_{i+j}$. Wir addieren außerdem den Übertrag der letzten Iteration an diese Stelle und merken uns den Übertrag, den wir dabei erhalten, für die nächste Iteration.
+
+    \smallskip
+    Damit das funktioniert, müssen wir die mit \lstinline{!!} markierte Behauptung beweisen:
+
+    Das Produkt zweier Ziffern $a_i,b_j\leq g-1$ ist höchstens $(g-1)^2=g^2-2g+1$ und die Addition von zwei weiteren Ziffern $z\leq g-1$ führt zu einem Maximum von $g^2-1$, was echt kleiner $g^2$ ist, also wirklich maximal zwei Ziffern hat. Der Übertrag $z$ ist also auch in der nächsten Iteration maximal eine Ziffer groß.
+\end{proof}
+
+\begin{remark}
+    Der Algorithmus ist offenbar nicht davon abhängig, dass $A$ und $B$ die gleiche Anzahl an Ziffern haben. Etwas präziser könnten wir die Laufzeiten also als $O(nm)$ ausdrücken, wobei $n$ und $m$ die Längen der beiden Zahlen sind.
+\end{remark}
+
+\begin{remark}
+    Man beachte auch, dass die asymptotische Laufzeit nicht von der Wahl von $g$ abhängig ist. Wenn wir eine andere Basis $g'$ wählen, dann sind $A$ und $B$ Zahlen mit $\approx \frac{\log(g)}{\log(g')}n$ Ziffern. Die Basis zu ändern, ändert also die Laufzeit nur um einen konstanten Faktor.
+\end{remark}
+
+
+\begin{remark}
+    Es ist nicht einmal notwendig, die beiden Inputs $A$ und $B$ bzgl. derselben Basis auszudrücken. In der Tat ist das genau das Prinzip hinter der \enquote{ägyptischen Multiplikation}, auch \enquote{(russische) Bauernmultiplikation} genannt:
+
+    Drückt man eine der beiden Zahlen in Basis $2$ aus, etwa $A$, so reduziert sich das Problem darauf, aus $B$ die Zahlen $2B$, $4B$, $8B$, \ldots zu berechnen, da die Multiplikationen $a_i\cdot B$ entweder $0$ oder $B$ ist (denn $a_i$ ist ja $0$ oder $1$ in Basis $2$), also keinen zusätzlichen Rechenaufwand verursachen:
+
+    \[(a_{n-1} 2^{n-1} + \ldots + a_2 2^2 + a_1 2 + a_0) \cdot B = \sum_{\substack{0\leq i\leq n-1 \\ a_i = 1}} 2^i B\]
+
+    Man kann also mit $B$ beginnen und die Zahl immer wieder zu sich selbst addieren, um $2B$, $4B$, \ldots zu erhalten. Und während dessen, jedes Mal, wenn das passende Bit in $A$ gesetzt ist, eine weitere Addition auf das Zwischenergebnis durchführen.
+\end{remark}
+
+\begin{algorithm}[Double-and-add]
+    \label{alg:double-and-add}
+    Input: $A$ in Binärdarstellung $a_{n-1}2^{n-1}+\ldots a_{2}2^2 +a_1 2 + a_0$, $B$ in beliebiger Basis $b_{m-1} g^{m-1} + \ldots b_2 g^2 + b_1 g+b_0$.
+
+    Output: Das Produkt $C=A\cdot B$ in Basis $g$.
+
+    Pseudocode:
+    %! suppress = MissingLabel
+    \begin{lstlisting}
+    Array<Digit> multiply(Array<Bit> a, Array<Digit> b){
+      // calculate the number of base-g-digits in A
+      n := floor( a.length * log(2)/log(g) ) + 1;
+      c := new Array<Digit>[n + b.length];
+
+      // stores 2^i*b
+      b2 := b;
+      for(i := 0; i<a.length; i++){
+        if(a[i] == 1){
+          c := add(c, b2);
+        }
+        b2 := add(b2,b2);
+      }
+
+      return c;
+    }
+    \end{lstlisting}
+\end{algorithm}
+
+\begin{proposition}[Korrektheit und Laufzeit]
+    Der Algorithmus ist korrekt, hat laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $O(n)$.
+\end{proposition}
+
+\begin{remark}
+    Da man in der Praxis eben nicht mit beliebigen $g$, sondern sehr häufig mit Zweierpotenzen $g=2^k$ arbeitet, ist für die Berechnung von $\frac{\log(2)}{\log(g)}$ keine Fließkomma-Arithmetik nötig, da sich alles zu $\frac{1}{k}$ kürzt. Die Länge von $A$ in bits ist typischerweise klein genug, damit die Division \lstinline{a.length / k} in einer einzigen Hardware-Instruktion berechnet werden kann.
+
+    \smallskip
+    Aber selbst wenn nicht: Man kann zeigen, dass die asymptotische Komplexität von Division im Wesentlichen die gleiche wie die der Multiplikation ist, d.h.\ man kann den Quotienten in $O(\log(a.length)\log(k)) = O(\log(n))$ bestimmen (da $k$ konstant ist), was gegenüber der Gesamtkomplexität von $O(n^2)$ nicht ins Gewicht fällt.
+
+    \smallskip
+    Mehr noch: Wenn $k$ selbst eine Zweierpotenz ist, dann ist die Division durch einen Bitshift realisierbar.
+\end{remark}
+
+% TODO square-and-multiply in Übungsaufgabe
