@@ -1,0 +1,96 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Gruppen}\label{gruppen}
+
+\begin{definition}[Gruppen]
+    \label{gruppen:def}
+    Eine \udot{Gruppe} $(G,*)$ besteht aus
+    \begin{itemize}
+        \item einer Menge $G$ und
+        \item einer Abbildung $*: G\times G, (g,h) \mapsto g\cdot h$, genannt \emph{Multiplikation},
+    \end{itemize}
+    die die \enquote{Gruppen-Axiome} erfüllen:
+
+    \begin{description}
+        \item{(G1)} Assoziativität: $\forall x,y,z\in G: x\ast (y\ast z)=(x\ast y)\ast z$.
+        \item{(G2)} Neutrales Element: $\exists e \in G \forall x\in G: x\ast e=e\ast x=x$.
+        \item{(G3)} Inverse Elemente: $\forall x \in G \exists x' \in G: x\ast x' = e = x'\ast x$.
+    \end{description}
+    Die Gruppe heißt \udot{abelsch}\footnote{Niels Hendrik Abel, norwegischer Mathematiker, 1802--1829} oder \udot{kommutativ}, falls zusätzlich dazu die folgende Bedingung erfüllt ist:
+    \begin{description}
+        \item{(G4)} Kommutativit: $\forall x,y,\in G: x\ast y=y\ast x$.
+    \end{description}
+
+    Der Kürze halber schreibt man oft nur $G$ statt $(G,\ast)$, falls klar ist, welche Operation $\ast$ gemeint ist.
+\end{definition}
+
+\begin{remark}
+    Es gibt zwei Klassen von Gruppen. Die einen sind Gruppen, bei denen man traditionell eine multiplikative Schreibweise wählt, d.h.\ der Name der Gruppenverknüpfung $\ast$ erinnert an ein Multiplikationssymbol, etwa $*$, $\cdot$, $\otimes$, $\circ$ etc. Oder sogar, wie bei der gewöhnlichen Multiplikation: Man lässt das Symbol ganz weg und schreibt nur noch $xy$. Praktisch alle nichtabelschen Gruppen schreibt man multiplikativ. In dieser Schreibweise nennt man das (es gibt wirklich nur eines, siehe Lemma \ref{gruppen:eindeutig_1}) neutrale Element dann $1$ statt $e$ und das (ebenfalls eindeutige, siehe Lemma \ref{gruppen:eindeutig_inv}) von $x$ nennt man $x^{-1}$ statt $x'$.
+
+    Die zweite Klasse sind Gruppen, die man traditionell additiv schreibt, d.h.\ der Name der Gruppenverknüpfung erinnert an ein Additionssymbol, etwa $+$ oder $\oplus$. Dies wird fast ausschließlich bei abelschen Gruppen angewandt. In dieser Schreibweise nennt man das neutrale Element dann $0$ statt $e$ und das inverse Element von $x$ nennt man $-x$ statt $x'$.
+
+    Es gibt aber natürlich keinen inhaltlichen Unterschied zwischen diesen Schreibweisen. Die Wahl, wie wir etwas aufschreiben, ist ja nur eine Frage der Ästhetik, sie hat keine inhaltlichen Konsequenzen.
+\end{remark}
+
+\begin{example}
+    \begin{enumerate}
+        \item $G = \IZ$ mit $x*y = x+y$. Es ist $e=0$, $x'=-x$. Diese Gruppe ist abelsch. Analog sind auch $(\IQ,+)$, $(\IR,+)$ und $(\IC,+)$ abelsche Gruppen.
+        \item $G = \IR_{>0} = \Set{x \in \IR | x > 0 }$ mit $x*y = xy$ (Multiplikation). Es ist $e=1$, $x' = \frac{1}{x}$.
+        \item Die \udot{triviale} Gruppe $G = \set{1}$, mit $1*1 = 1$. Neutrales Element $1$, und $1' = 1$.
+        \item Die Menge $G = \set{+1,-1}$, mit Multiplikation. Es ist $e=1$, $x'=\frac{1}{x}=x$. Dies ist eine endliche Gruppe: $\abs{G} = 2$.
+        \item Die Matrizengruppen $GL_n(K)$, $SL_n(K)$, $O_n(\IR)$, $SO_n(\IR)$, $U_n(\IC)$, $SU_n(\IC)$, \ldots sind wichtig für Geometrie und Physik:
+
+        $O_n(\IR)$ beschreibt Drehungen und Spiegelungen im $n$-dimensionalen Raum; $SO_n(\IR)$ beschreibt nur die Drehungen. $U_1(\IC)$ z.B.\ beschreibt die Phasenverschiebung zwischen zwei rotierenden Systemen; $SU_2(\IC)$ ist z.B.\ für die Beschreibung der elektromagnetischen Kraft zuständig und ist u.A.\ für das quantenphysikalische Phänomen des Spins verantwortlich; $SU_3(\IC)$ spielt in der Beschreibung der starken Kernkraft eine Rolle.
+
+        Andere Gruppen wie z.B. $O_{3,1}(\IR)$ kommen in der Relativitätstheorie vor (Sie erkennen drei Raum- und eine Zeitdimension). Diese Gruppe beschreibt sogenannte \enquote{Lorentz-Boosts}.
+
+        Diese Gruppen sind fast alle nichtabelsch und unendlich.
+    \end{enumerate}
+\end{example}
+
+\begin{example}
+    \begin{enumerate}
+        \item $(\IN,+)$ ist hingegen keine Gruppe. (G1) und (G2) sind zwar erfüllt, aber (G3) nicht, denn nicht \emph{jedes} Element hat ein inverses Element. $0$ hat eines, $1$ aber nicht, denn es gibt keine natürliche Zahl, die $n+1=1+n=0$ erfüllt. (Es gibt eine ganze Zahl, die das erfüllt, aber keine natürliche)
+
+        \item Aus ähnlichen Gründen ist auch $(\IR,\cdot)$ keine Gruppe. Das Element $0\in\IR$ ist nicht invertierbar, denn keine reelle Zahl erfüllt $x\cdot 0 = 1$.
+    \end{enumerate}
+\end{example}
+
+
+\begin{lemma}[Eindeutigkeit des neutralen Elements und der inversen Elemente] \label{gruppen:eindeutig_1_inv}
+Sei $(G,*)$ eine Gruppe.
+\begin{enumerate}[ref=\thetheorem.\alph*]
+    \item \label{gruppen:eindeutig_1}
+    Es gibt in $G$ genau ein neutrales Element.
+    \item \label{gruppen:eindeutig_inv}
+    Zu jedem $x \in G$ gibt es genau ein Inverses $x' \in G$. Dieses nennt man daher $x^{-1}$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+    Übung.
+\end{proof}
+
+\begin{lemmadef}[Potenzschreibweise]
+    Zusätzlich zur Schreibweise $g^{-1}$ für inverse Elemente führen wir allgemeiner Potenzen mit ganzzahligen Exponenten für alle Gruppenelemente ein.
+
+    Ist $(G,\cdot)$ eine (multiplikativ notierte) Gruppe und $g\in G$, so definieren wir $g^k$, indem wir
+    \[g^0 := 1 \quad g^{k+1}:=g^k\cdot g \quad\text{und}\quad g^{k-1} := g^k \cdot g^{-1}\]
+    für alle $k\in\IZ$ festlegen. Mit dieser Bezeichnung gilt dann:
+    \begin{enumerate}
+        \item $\forall g\in G \forall n,m\in\IZ: g^{n+m} = g^n \cdot g^m$
+        \item $\forall g\in G \forall n,m\in\IZ: g^{nm} = (g^n)^m$
+    \end{enumerate}
+    Falls $(G,\cdot)$ eine abelsche Gruppe ist, dann gilt außerdem
+    \begin{enumerate}[resume]
+        \item $\forall g_1,g_2\in G\forall n\in\IZ: (g_1 \cdot g_2)^n = g_1^n \cdot g_2^n$
+    \end{enumerate}
+\end{lemmadef}
+\begin{proof}
+    Übung.
+\end{proof}
+
+\begin{remark}
+    In additiv geschriebenen Gruppen benutzt man normalerweise nicht die Potenzschreibweise $g^n$, sondern die Schreibweise $ng$. Dann schreiben sich die drei Potenzgesetze aber ebenso wiedererkennbar einfach als
+    \[(n+m)g = ng+mg,\quad (nm)g = n(mg),\quad n(g_1+g_2)=ng_1+ng_2\]
+\end{remark}

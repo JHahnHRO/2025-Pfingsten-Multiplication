@@ -1,0 +1,197 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Ringe}\label{ringe}
+\begin{definition}
+    Ein \udot{Ring} $R=(R,+,\cdot)$ besteht aus einer Menge $R$ zusammen mit Abbildungen ${+} : R \times R \to R$, $(x,y) \mapsto x+y$, genannt \enquote{Addition}, und $\cdot : R\times R \to R$, $(x,y) \mapsto x\cdot y = xy$, genannt \enquote{Multiplikation}, welche die folgenden Bedingungen erfüllen:
+    \begin{description}
+        \item{(R1)} $(R,+)$ ist eine abelsche Gruppe. Das neutrale Element bezeichnen wir mit $0_R$ und nennen es \udot{Nullelement} des Rings.
+        \item{(R1)} Assoziativität der Multiplikation:
+        \[\forall x,y,z\in R: (xy)z = x(yz)\]
+        \item{(R3)} Neutrales Element der Multiplikation:
+        \[\exists 1_R\in R \forall x\in R: x\cdot 1_R=x=1_R\cdot x\]
+        Dieses Element nennen wir \udot{Einselement} des Rings.
+        \item{(R4)} Distributivgesetze:
+        \[\forall x,y,z\in R: x(y+z)=xy+xz \wedge (x+y)z=xz+yz\]
+    \end{description}
+    Der Ring heißt \udot{kommutativ}, falls zusätzlich
+    \begin{description}
+        \item{(R5)} Kommutativität: $\forall x,y\in R: xy=yx$.
+    \end{description}
+    gilt.
+
+    Der Kürze halber schreibt man oft nur $R$ statt $(R,+,\cdot)$, wenn aus dem Kontext klar ist, welche Addition und Multiplikation gemeint sind.
+\end{definition}
+
+\begin{example}
+    \begin{enumerate}
+        \item $\IZ$, $\IQ$ und $\IR$ sind Ringe bezüglich der üblichen Addition und
+        Multiplikation.
+        \item Der Nullring $R=\set{0}$ mit $0+0=0\cdot0=0$ ist ein Ring, mit $1_R=0_R=0$. In der Tat ist das der einzige Ring, in dem $0_R=1_R$ gilt (Übung).
+        \item Ist $R$ ein Ring und $n\in\IN$, so ist die Menge $R^{n\times n}$ aller $n\times n$-Matrizen über $R$ ein Ring bezüglich Matrixaddition und -multiplikation (s. unten).
+        \item $\IZ/n$ der Ringe der \enquote{Restklassen modulo $n$} besteht aus den Äquivalenzklassen
+        \[[a] := \Set{b\in\IZ | a\equiv b \mod n}\]
+        zusammen mit der Addition $[a]+[b]:=[a+b]$ und der Multiplikation $[a]\cdot[b]:=[ab]$.
+        \item Die Menge $R[X]$ aller Polynome mit Koeffizienten aus $R$ ist ein
+        Ring zusammen mit der üblichen Addition:
+        \[\sum_{i=0}^n a_i X^i + \sum_{i=0}^n b_i X^i := \sum_{i=0}^{n} (a_i+b_i)X^i\]
+        \[(\sum_{i=0}^n a_i X^i)(\sum_{j=0}^m b_j X^j) := \sum_{k=0}^{n+m} (\sum_{\substack{i,j \\ i+j=k}} a_i b_j) X^k\]
+        Ist $R$ kommutativ, dann ist auch $R[X]$ ein kommutativer Ring.
+    \end{enumerate}
+\end{example}
+
+\begin{lemma}
+    Sei $R$ ein Ring. Dann:
+    \begin{enumerate}
+        \item Es gibt nur ein Einselement in $R$.
+        \item $\forall x \in R : 0\cdot x = x \cdot 0 = 0$.
+        \item $\forall x,y \in R : x\cdot(-y)=(-x)\cdot y = -(xy)$.
+        \item $(-1)^2 = 1$.
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+    Übung.
+\end{proof}
+
+\subsubsection{Matrizen}
+
+\begin{definition}
+    Es sei $R$ ein Ring und $n,m\in\IN$. Eine \udot{$n\times m$-Matrix mit Einträgen aus $R$} ist eine rechteckige Anordnung von $nm$ Elementen von $R$ in $n$ Zeilen und $m$ Spalten. Im Deutschen Sprachgebrauch ist es üblich, runde Klammern um eine Matrix zu schreiben.
+
+    Die Menge aller $n\times m$-Matrizen mit Einträgen aus $R$ bezeichnen wir mit $R^{n\times m}$.
+
+    Ist $A$ eine solche Matrix, so bezeichnet man mit $A_{ij}$ den \udot{Eintrag an
+    der Stelle $(i,j)$}, d.h. in der $i$ten Zeile und der $j$ten Spalte.
+
+    Eine Matrix heißt \udot{quadratisch}, wenn die Anzahl der Zeilen und
+    der Spalten gleich sind.
+\end{definition}
+
+\begin{example}
+    Hier ist eine $(3\times2)$-Matrix mit Einträgen aus $\IR$:
+    $\begin{pmatrix}
+         1& 2\\4& -7\\0,5& \pi
+    \end{pmatrix}$.
+\end{example}
+
+\begin{example}
+    Eine $1\times 0$-Matrix: $()$.
+\end{example}
+
+\begin{example}
+    Für $A=\begin{pmatrix}
+               1& 3& 7& 4\\3& 1& 2& 9\\8& 0& 7& 3
+    \end{pmatrix}$
+    ist $A_{23}=2$.
+\end{example}
+
+\begin{definition}[Matrixaddition und -multiplikation]
+    Für Matrizen $A,B \in R^{m\times n}$ wird die Summe
+    $A+B \in R^{m\times n}$ definiert durch
+    \[(A+B)_{ij} := A_{ij}+B_{ij}\]
+    für alle $1\leq i\leq m, 1\leq j\leq n$.
+
+    \medbreak
+    Sind $A \in R^{m \times n}$ und $B \in R^{n \times p}$ Matrizen,
+    so wird das Produkt $AB \in R^{m\times p}$ definiert durch
+    \[(AB)_{ik} := A_{i1}B_{1k} + A_{i2}B_{2k} + A_{i3}B_{3k} + \cdots
+    + A_{in} B_{nk} = \sum_{j=1}^n A_{ij} B_{jk} \]
+    für alle $1\leq i\leq m, 1\leq j\leq n$.
+
+    \medbreak
+    Ist $A\in R^{m\times n}$ eine Matrix und $\lambda\in R$ ein Skalar, so ist $\lambda A\in R^{m\times n}$ definiert durch
+    \[(\lambda A)_{ij} := \lambda A_{ij}\]
+
+    \medbreak
+    Die \udot{Nullmatrix} $0=0_{n\times m}\in R^{n\times m}$ ist definiert durch
+    \[(0_{n\times m})_{ij} := 0\]
+
+    \medbreak
+    Die \udot{Einheitsmatrix} $1_{n\times n}$ ist die $n\times n$-Matrix, deren Eintrag an der Stelle $(i,j)$ genau
+    \[\delta_{ij} = \begin{cases}
+                        1 & i = j \\ 0 & \text{sonst}
+    \end{cases}\]
+    ist.
+\end{definition}
+
+\begin{example}
+    $\begin{pmatrix}
+         1& 2& 4\\2& 5& 7
+    \end{pmatrix}
+    + \begin{pmatrix}
+          0& 3& 1\\1& 1& 1
+    \end{pmatrix}
+    = \begin{pmatrix}
+          1& 5& 5\\3& 6& 8
+    \end{pmatrix}$.
+\end{example}
+\begin{example}
+    \[\left(\begin{array}{cc}
+                1 & 0 \\
+                3 & 1
+    \end{array}\right)\cdot\left(\begin{array}{ccc}
+                                     0 & 2 & 4 \\
+                                     1 & 3 & 5
+    \end{array}\right)
+    = \begin{pmatrix}
+          1\cdot0+0\cdot1 & 1 \cdot 2 + 0\cdot3 & 1\cdot4+0\cdot5   \\
+          3\cdot0+1\cdot1 & 3\cdot2+1\cdot3     & 3\cdot4 + 1\cdot5
+    \end{pmatrix}
+    = \begin{pmatrix}
+          0& 2& 4\\1& 9& 17
+    \end{pmatrix} \]
+\end{example}
+
+\begin{remark}
+    Beachten Sie: das Produkt $AB$ ist nur dann definiert, wenn $A$ die gleiche
+    Anzahl von Spalten hat, wie $B$ Zeilen hat.
+\end{remark}
+
+
+\begin{lemma}[Ringeigenschaften]
+    \label{matrizen:ring_eigenschaften}
+    Matrizenringe $R^{n\times n}$ sind wirklich Ringe. Allgemeiner gilt selbst für rechteckige Matrizen:
+    \begin{enumerate}
+        \item $(R^{n\times m},+)$ ist eine abelsche Gruppe.
+        \item Matrixmultiplikation ist assoziativ:
+        \[\forall A\in R^{n\times m}, B\in R^{m\times p}, C\in R^{p\times q}: (AB)C = A(BC)\]
+        \item Matrizenmultiplikation ist distributiv:
+        \[\forall A\in R^{n\times m}, B,C\in R^{m\times p} : A(B+C) = AB+AC\]
+        \[\forall A;B\in R^{n\times m}, C\in R^{m\times p} : (A+B)C = AC+BC\]
+        \item Einheitsmatrizen sind Einselemente:
+        \[\forall A \in R^{n \times m}: 1_{n\times n} \cdot A = A = A\cdot 1_{m\times m}\]
+        \item Multiplikation mit Skalaren ist assoziativ:
+        \[\forall A\in R^{n\times m}, B\in R^{m\times p}\forall \lambda\in R: (\lambda A)B = \lambda (AB)\]
+        sowie, wenn $R$ kommutativ ist
+        \[\forall A\in R^{n\times m}, B\in R^{m\times p}\forall \lambda\in R: \lambda (AB)=A(\lambda B)\]
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    Übung.
+\end{proof}
+
+\begin{example}
+    Schon $R^{2\times 2}$ und alle größeren Matrizenringe sind nicht kommutativ, selbst wenn $R$ noch kommutativ war, denn
+    \[
+        \begin{pmatrix}
+            1& 0\\0& 0
+        \end{pmatrix}
+        \begin{pmatrix}
+            0& 1\\0& 0
+        \end{pmatrix}
+        = \begin{pmatrix}
+              0& 1\\0& 0
+        \end{pmatrix}
+        \quad \text{aber} \quad
+        \begin{pmatrix}
+            0& 1\\0& 0
+        \end{pmatrix}
+        \begin{pmatrix}
+            1& 0\\0& 0
+        \end{pmatrix}
+        = \begin{pmatrix}
+              0& 0\\0& 0
+        \end{pmatrix} \, .
+    \]
+\end{example}
