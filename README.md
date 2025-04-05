@@ -1,2 +1,3 @@
-# 2025-Pfingsten-Multiplication
-Kursvorbereitung 2025 "Multiplikation"
+# Multiplikation in O(n*log(n))
+
+
