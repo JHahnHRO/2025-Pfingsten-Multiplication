@@ -1,0 +1,60 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\begin{remark}
+Über Jahrtausende ist keine Methode bekannt gewesen, wesentlich schneller als $O(n^2)$ zu multiplizieren. Erst 1960 wurde von Anatoly Karatsuba\footnote{russ. Mathematiker, 1937--2008} eine schnellere Methode entdeckt.
+
+\medskip
+Karatsubas Methode arbeitet rekursiv wie alle anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
+
+\medskip
+Speziell für Karatsubas Methode wählt man $G$ groß genug, dass die beiden Inputs $A$ und $B$ nur noch aus zwei Ziffern bestehen. Für Zahlen mit zwei Ziffern $A=a_1G+a_0, B=b_1G+b_0$ gilt:
+\[AB = \underbrace{a_1 b_2}_{=c_2} G^2 + (\underbrace{a_1 b_0+a_0 b_1}_{=c_1})G+\underbrace{a_0 b_0}_{=c_0}\]
+In dieser Form aufgeschrieben, sehen wir genau die $2^2$ Multiplikationen, die der klassische Algorithmus benötigt. Karatsuba sah, dass der mittlere Term auch gleich
+\[c_1 = (a_1+a_0)(b_1+b_0)-a_1 b_1-a_0b_0 = (a_1+b_1)(b_1+b_0)-c_2-c_0\]
+ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition auch durch eine Multiplikation und zwei Subtraktionen berechnen. Additionen und Subtraktionen haben typischerweise annähernd die gleiche Laufzeit.
+\end{remark}
+
+\begin{algorithm}[Karatsuba's algorithm]\label{alg:karatsuba}
+    %! suppress = MissingLabel
+    \begin{lstlisting}
+    Array<Digit> multiply(Array<Digit> a, Array<Digit> b) {
+        int n := max(a.length, b.length);
+        if(n <= CUTOFF){
+            return slow_multiply(a,b); // algorithm A1
+        }
+    
+        int k := ceil(n/2); // round up if n is odd
+        
+        low   := multiply(a[0..k-1], b[0..k-1]);
+        high  := multiply(a[k..n-1], b[k..n-1]);
+        
+        mixed_a := add(a[0..k-1], a[k..n-1]);
+        mixed_b := add(b[0..k-1], b[k..n-1]);
+        
+        product := multiply(mixed_a, mixed_b);
+        middle := subtract(subtract(product, high), low);
+        
+        return add(low, (0,middle), (0,0,high));
+    }    
+    \end{lstlisting}
+\end{algorithm}
+
+\begin{remark}
+In der Praxis wählt man den Cutoff nicht so klein wie möglich, um möglichst viel mit der \enquote{besseren} Karatsuba-Methode zu arbeiten, sondern ein kleines bisschen größer, da für sehr kleine Anzahlen von Ziffern die Schul-Methode in der Praxis doch schneller ist als die Karatsuba-Methode. Selbst wenn nur einer der beiden Faktoren wenig Ziffern hat, insbesondere wenn ein Faktor nur eine Ziffer hat, ist die Schul-Methode schneller.
+
+\smallskip
+Die Standard-Library von Java nutzt beispielsweise $g=2^{32}$ als Basis, d.h. 32-bit Integer werden direkt per Hardware-Instruktion multipliziert, und $n=20$ als Cutoff\footnote{Diese Zahlen sind Implementierungsdetails, die sich von einer Java-Version zur nächsten auch mal ändern können. Ich habe sie im Temurin JDK 21 geprüft. Wer selbst nachschauen will: Es geht um die Klasse \lstinline{java.math.BigInteger} und ihre Methode \lstinline{multiply(BigInteger)}.}: Sobald einer der Faktoren weniger als $20$ Ziffern groß ist, wird mit der Schul-Methode multipliziert.
+\end{remark}
+
+\begin{remark}
+Man beachte, dass $(a_1+a_0)(b_1+b_0)$ nicht ein Produkt von zwei Zahlen $<G$, sondern $<2G$ ist. Wir sind also ganz leicht über die Grenze gegangen, bis zu der wir gehen wollten. Man kann auch nicht einfach $G$ etwas größer zu wählen, sodass die führenden Ziffern $a_1$ und $b_1$ kleiner werden, z.B. wird das mit $A=199999$ nicht funktionieren: Egal, welche (sinnvolle) Potenz $G=10^k$ wir wählen, die Ziffer $a_0$ wird immer $9..99$ sein und somit bei Addition zum Overflow führen.
+
+\smallskip
+Da man i.d.R. nicht mit $g=2$ arbeitet (sondern eher $g=2^{32}$), benötigt man für die Summen $a_1+a_0$ und $b_1+b_0$ selbst im Extremfall nur eine weitere Ziffer. Man verliert also in der Praxis nicht wirklich viel. Insbesondere dann, wenn man die Karatsuba-Methode sowieso nur für die größeren Produkte einsetzt; ob man von 1000 zu 500 oder 501 Ziffern reduziert, ist nicht so furchtbar relevant.
+
+\medskip
+Wenn man es unbedingt möchte, ist es aber möglich, stattdessen
+\[c_1=-(a_1-a_0)(b_1-b_0)+a_1 b_1+a_0 b_0\]
+zu verwenden, denn da $0\leq a_0,a_1\leq G-1$ gilt, wird auch stets $\abs{a_1-a_0}\leq G$ sein. Manzahlt dafür den Preis, ein bisschen mehr Buchhaltung mit den Vorzeichen betreiben zu müssen.
+\end{remark}
