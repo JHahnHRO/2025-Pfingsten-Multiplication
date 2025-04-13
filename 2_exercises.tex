@@ -1,0 +1,26 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\begin{sheet}
+
+\begin{problem}
+Finde eine explizite Abbilungsvorschrift für eine Funktion $T: \IR_{\geq 1} \to \IR$ an, die die Rekursion
+\[T(n) = a T\left(\frac{n}{b}\right) + cn, T(1)=t_1\]
+mit $a,b\geq 2, c\geq 0$ erfüllt.
+
+Hinweis: Betrachte $n=b^k$.
+\end{problem}
+
+\begin{problem}[title={Mastertheorem}]\label{ex:mastertheorem}
+Beweise das \emph{Mastertheorem für divide-and-conquer-Algorithmen}:
+
+Gegeben sei eine Rekursion der Form
+\[T(n) = a T\left(\frac{n}{b}\right) + f(n)\]
+für Zahlen $a,b>1$ und eine nichtnegative Funktion $f$. Definiere $e_{crit} := \frac{\log(a)}{\log(b)}$. Dann gilt:
+\begin{enumerate}
+\item Wenn $f\in O(n^c)$ mit $c<e_{crit}$, dann ist $T\in\Theta(n^{e_{crit}})$.
+\item Wenn $f\in O(n^{e_{crit}})$, dann ist $T\in\Theta(n^{e_{crit}} \log(n))$.
+\end{enumerate}
+\end{problem}
+
+\end{sheet}
