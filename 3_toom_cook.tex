@@ -1,0 +1,175 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\begin{remark}
+Der nächste große Durchbruch kam schnell nach Karatsuba: 1963 bereits beschrieb Toom\footnote{Andrei Leonovich Toom, 1942--2022, russischer Mathematiker} eine Verallgemeinerung von Karatsubas Algorithmus; 1966 beschrieb Cook\footnote{Stephen Arthur Cook, geb. 1939, amerikanisch-kanadischer Mathematiker} eine vereinfachte Version, die heutzutage Toom-Cook-Algorithmus genannt wird.
+
+\medskip
+\enquote{Der} Toom-Cook-Algorithmus ist tatsächlich eine Familie von Algorithmus, parametrisiert durch eine natürliche Zahl $k\geq 2$. In der Praxis verwendet wird jedoch nur die $k=3$ Version, welche dementsprechend auch \enquote{der} Toom-Cook-Algorithmus genannt wird.
+
+\smallskip
+Die grundlegende Idee ist es, die Input-Zahlen nicht in 2, sondern $k$ Teile zu zerlegen und die $G$-Ziffern der Inputs
+\[A = a_{k-1} G^{k-1} + \ldots + a_1 G + a_0, \quad B = b_{k-1} G^{k-1} + \ldots + b_1 G + b_0\]
+als Koeffizienten von zwei Polynomen
+\[\alpha(X) = a_{k-1} X^{k-1} + \ldots + a_1 X + a_0, \quad \beta(X) = b_{k-1} X^{k-1} + \ldots + b_1 X + b_0\]
+aufzufassen. Die Zahlen $A$ und $B$ sind Auswertungen dieser Produkte an der Stelle $X=G$; das Produkt $C:=A\cdot B$ ist entsprechend die Auswertung des Polynoms $\gamma(X):=\alpha(X)\beta(X)$ an der Stelle $X=G$. Wenn wir die Koeffizienten von $\gamma$ aus den Koeffizienten von $\alpha$ und $\beta$ berechnen können, dann ist die Ermittlung von $C$ sehr einfach.
+
+\smallskip
+Das Produkt $\alpha(X)\beta(X)$ mittels der Definition
+\[\alpha(X)\beta(X) = \sum_{i,j} a_i b_j X^{i+j}\]
+auszurechnen, würde uns direkt wieder zur Schulmultiplikation führen. Die entscheidende Einsicht ist aber, dass ein Polynom vom Grad $d$ bereits eindeutig durch seine Werte an $d+1$ beliebigen Stützstellen festgelegt ist. Wir benötigen $2k-1$ Stützstellen für $\gamma$.
+
+Wenn wir an Stelle der relativ großen Zahl $G$ sehr kleine Stützstellen, z.B. 
+\[s\in\set{-k-1,\ldots,-1,0,1,\ldots,k-1}\]
+verwenden, dann sind die Ergebnisse $\alpha(s)$ und $\beta(s)$ eher in der Größenordnung $const\cdot G$, nicht $G^k$.
+
+Wir können also die Produkte $\alpha(s)\beta(s)$ mit einer kleineren Multiplikation bestimmen und so einen rekursiven Multiplikationsalgorithmus bauen, wenn wir es schaffen, aus den Stützstellen $\gamma(s)$ relativ schnell wieder die Koeffizient von $\gamma$ zu bestimmen.
+\end{remark}
+
+\begin{lemma}[Vandermonde-Matrix]
+Evaluation an $q$ Stützstellen $s_0,s_1,\ldots,s_q\in\IR$ ist eine lineare Abbildung $\IR[X]_{\leq d} \to \IR^{q+1}$
+\[\begin{pmatrix}
+\alpha(s_0) \\ \alpha(s_1) \\ \vdots \\ \alpha(s_q)
+\end{pmatrix} = \underbrace{\begin{pmatrix}
+s_0^0 & s_0^1 & \cdots & s_0^d \\
+s_1^0 & s_1^1 & \cdots & s_1^d \\
+\vdots & \vdots & \ddots & \vdots \\
+s_q^0 & s_q^1 & \cdots & s_q^d
+\end{pmatrix}}_{=:V \in \IR^{(q+1)\times(d+1)}}\cdot\begin{pmatrix}
+\alpha_0 \\ \alpha_1 \\ \vdots \\ \alpha_d
+\end{pmatrix}\]
+Für $q=d$ ist die Matrix $V$ invertierbar.
+\end{lemma}
+\begin{proof}
+Übung.
+\end{proof}
+
+\begin{algorithm}[Toom-Cook-$k$]\label{ag:toom_cook}
+Parameter: $k\in\IN_{\geq{2}}$, paarweise verschiedene Stützstellen $\set{s_\ell | 0\leq\ell<2k-1}\subset\IQ$.
+
+Vorberechnung:
+\begin{itemize}
+\item Die Evaluationsmatrix $\mathcal{E}\in\IQ^{(2k-1)\times k}$ mit $\mathcal{E}_{\ell,m} = s_\ell^m$ für $0\leq\ell<2k-1, 0\leq m<k$.
+\item Die Interpolationsmatrix $\mathcal{I}\in\IQ^{(2k-1)\times(2k-1)}$ mit $(\mathcal{I}^{-1})_{\ell,m} = s_\ell^m$ mit $0\leq\ell,m < 2k$.
+\end{itemize}
+
+\begin{lstlisting}
+Array<Digit> multiply(Array<Digit> a, Array<Digit> b){
+    n := max(a.length, b.length);
+    if(n < CUTOFF){
+        return slow_multiplication(a,b); // algorithms A1 and/or A3
+    }
+    n_prime := ceil(n/k); // n' is the size of the individual chunks
+    
+    for(int m:=0; m<k; m++) {
+        // not an actual computation, only a naming convention
+        alpha[m] := a[m*n_prime .. (m+1)n_prime-1];
+        beta[m]  := b[m*n_prime .. (m+1)n_prime-1];
+    }
+    
+    // Step 1: evaluate alpha and beta at the chosen points
+    eval_alpha := new Array<>[2k-1]; // each of these entries is itself
+    eval_beta  := new Array<>[2k-1]; // an array of n_prime+O(1) digits
+    
+    for(int l:=0; l<2k-1; l++) {
+        for(int m:=0; m<k; m++) {
+            // multiplications with small, known constants
+            // => no recursion necessary here
+            eval_alpha[l] := add(eval_alpha[l],
+                                 multiply(E[l][m], alpha[m]));
+        }
+    }
+    
+    // Step 2: pointwise multiplication
+    
+    // each of the entries if itself an array of 2*n_prime+O(1) digits
+    eval_gamma := new Array<>[2k-1];
+    
+    for(int l:=0; l<2k-1; l++) {
+        // recursion here
+        eval_gamma[l] := multiply(eval_alpha[l], eval_beta[l]);
+    }
+    
+    // Step 3: recover coefficients of gamma
+    gamma := new Array<>[2k-1];
+    
+    for(int l:=0; l<2k-1; l++) {
+        for(int m:=0; m<2k-1; m++) {
+            // multiplication with constant rationals, i.e.
+            // multiplication and division with small, known constants
+            // => no recursion necessary here
+            gamma[l] := add(gamma[l],
+                            multiply(I[l][m], eval_gamma[m]));
+        }
+    }
+    
+    // Step 4: evaluate gamma(g^k)
+    result := new Array<Digit>[2n];
+    for(int l=0: l<2k-1; l++) {
+        result[l*n_prime...] := add(result[l*n_prime...], gamma[l]); 
+    }
+    
+    return result;
+}
+\end{lstlisting}
+\end{algorithm}
+
+\begin{proposition}
+Der obige Algorithmus ist korrekt, hat Laufzeit $O(n^e)$ mit $e:=\frac{\log(2k-1)}{\log(k)}$ und Speicherbedarf $O(n)$.
+\end{proposition}
+\begin{proof}
+Analog zum Beweis für den Karatsuba-Algorithmus folgt dies im Wesentlichen aus dem Mastertheorem, da wir die Rekursion $T(n) = (2k-1)T(\frac{n}{k})+O(n)$ für die Laufzeit haben. Dabei benutzen wir, dass Multiplizieren mit kleinen Konstanten Laufzeit $O(n)$ hat.
+
+Wir benötigen Speicher für \texttt{eval\_alpha}, \texttt{eval\_beta}, \texttt{eval\_gamma}, \texttt{gamma} und \texttt{result}. Das sind viermal $2n+O(1)$ und einmal $2n$ Speicher, die wir benötigen. Das $O(1)$ kommt jeweils davon, dass wir bei den diversen Additionen Platz für einen Übertrag bereitstellen müssen.
+
+Insgesamt kommen wir also auf $10n+O(1)$ pro Rekursionsstufe. Insgesamt benötigen wir also \[(10n+O(1))\left(1+\frac{1}{k}+\frac{1}{k^2}+\ldots\right) = 10n\frac{k}{k-1}+O(\log(n))\]
+Speicher.
+\end{proof}
+
+\begin{remark}
+Wir benötigen $O(k^2)$ viele Multiplikationen/Divisionen mit kleinen Konstanten. Die $O$-Konstante in $O(n)$ für die Multiplikationen/Divisionen hängt aber empfindlich davon ab, welche Konstanten das genau sind. Auch wenn es für die asymptotische Laufzeit nicht relevant ist, muss man sich also doch etwas Mühe geben bei der Wahl der Sützstellen.
+
+\smallskip
+Besonders einfach ist es, Polynome in $X=0$ auszuwerten, weil dafür gar keine Rechnung notwendig ist, also wählt man $0$ immer als eine der Stützstellen. Ebenfalls kostenlos ist die \enquote{Auswertung bei $X=\infty$}. Damit meint man für ein Polynom vom Grad $d$ die Berechnung von $\lim_{x\to\infty} \frac{p(x)}{x^d}$, was genau den führenden Koeffizienten des Polynoms ergibt. In unserer Notation also $a_{k-1}$, $b_{k-1}$ bzw. $\gamma_{2k-2}$. Man kann sich leicht überlegen, dass $\gamma(\infty)=\alpha(\infty)\beta(\infty)$ ebenfalls erfüllt ist, sodass unsere Rechnung trotzdem funktionieren.
+\end{remark}
+
+\begin{remark}
+Für $k=2$ erhält man Karatsubas Algorithmus als Spezialfall, indem man die Stützstellen $0,1,\infty$ wählt. Das ergibt nämlich genau die Produkte
+\[\gamma(0) = \alpha(0)\beta(0) = a_0 b_0\]
+\[\gamma(1) = \alpha(1)\beta(1) = (a_1 1^1+a_0 1^0)(b_1 1^1+b_0 1^0)\]
+\[\gamma(\infty) = \alpha(\infty)\beta(\infty) = a_1 b_1\]
+die wir für Karatsubas Algorithmus benutzt haben.
+\end{remark}
+
+\begin{remark}
+Für $k=3$ erhalten wir einen Algorithmus in $O(n^{\log(5)/\log(3)}) \subseteq O(n^{1.465})$.
+\end{remark}
+
+\begin{remark}[Große $k$]
+Für $k\to\infty$ ist $\frac{\log(2k-1)}{\log(k)} \searrow 1$. Durch hinreichend groß gewähltes $k$ können wir also für jedes $\varepsilon>0$ einen Multiplikationsalgorithmus in $O(n^{1+\varepsilon})$ hinschreiben.
+
+\medskip
+In der Praxis verwendet man aber keine großen Werte für $k$, da der Overhead extrem schnell anwächst, während der Break-even-point, ab dem die theoretische asymptotische Laufzeit die tatsächliche Laufzeit bestimmt, viel zu schnell wächst: Wenn wir $k$ so groß genug wählen wollen, damit $\frac{\log(2k-1)}{\log(k)} \approx \frac{\log(2k)}{\log(k)} \leq 1+\frac{1}{e}$ erfüllt ist, dann müssen wir in der Tat $k\geq 2^e$ wählen.
+
+Wenn wir das aber tun, dann ist der Overhead für einen einzigen Rekursionsschritt in der Größenordnung $C k^2 n = C 2^{2e}n$. Für extrem große $n$ wird das zwar dominiert von $C' n^{1+1/e}$, aber tatsächlich geschieht das erst bei $n\geq \left(\frac{C}{C'}\right)^e 2^{2 e^2}$.
+
+\smallskip
+Selbst wenn wir nur $O(n^{1.1})$ erreichen wollen (also $e=10$), dann müssen wir $k=2^{10}$ und Zahlen mit vielen hundert Bit betrachten, bevor wir überhaupt eine \emph{Chance} haben, dass der Toom-Cook-$k$-Algorithmus sich tatsächlich auszahlt. Mehr noch: Wenn $k=2^{10}$ ist, dann sind die Potenzen $s_\ell^m$, die wir für die Vandermonde-Matrix ausrechnen müssen, schon im Bereich von bis zu $10 \cdot (2k-1) \approx 20000$ bits groß. Das stellt die Behauptung in Frage, wie \enquote{klein} die kleinen Konstanten eigentlich sind, die da in den drei Matrix-Vektor-Multiplikationen vorkommen. Wir müssen also in Wahrheit eher zehntausende Bits, vielleicht sogar hunderttausende Bits große Zahlen betrachten, bevor sich dieser Algorithmus praktisch auszahlt.
+\end{remark}
+
+\begin{remark}
+Nichts desto trotz ist diese Überlegung für die Theorie interessant. Wenn man für jedes $k$ einen geeigneten Cutoff vorberechnet, dann kann man alle Toom-Cook-Algorithmus zu einem gemeinsamen Algorithmus kombinieren, der für hinreichend große Zahlen Toom-Cook-$k$ mit immer größer werdendem $k$ verwendet. Dieser Algorithmus ist dann offenbar asymptotisch schneller als jeder einzelne Toom-Cook-Algorithmus, also in $o(n^{1+\varepsilon})$ für jedes $\varepsilon>0$.
+
+\smallskip
+Es ist nicht genau bekannt, welche Komplexitätsklasse man mit diesem Ansatz erreichen kann, aber eine Implementierung von Knuth\footnote{Donald Ervin Knuth, geb. 1938, amerikanischer Mathematiker und Informatiker, Autor der \enquote{The Art of Computer Programming} Buchreihe.} erzielt eine Komplexität von $O(n 2^{\sqrt{2 \log(n)}} \log(n))$, aber es ist nicht bekannt, ob das die beste Implementierung ist.
+\end{remark}
+
+\begin{remark}
+Wegen des schnell zunehmenden Overheads werden nur sehr kleine $k$ praktisch eingesetzt und selbst dann nur für sehr große $n$.
+
+\smallskip
+Die\footnote{Wieder OpenJDK 21 in diesem Fall; andere Implementierungen der Standardbibliothek könnten theoretisch davon abweichen} Java Implementierung wählt z.B. $n=240$ als Cutoff, d.h. erst wenn beide Faktoren mehr als 240 Worte groß sind, wird die Toom-Cook-$3$-Multiplikation gegenüber der Karatsuba-Methode bevorzugt. Ein höheres $k$ wird gar nicht verwendet in der Implementierung.
+
+\smallskip
+GMP verwendet $k\leq 8$ in gewissen Grenzen und den (asymptotisch noch schnelleren) Schönhage-Strassen-Algorithmus darüber.
+\end{remark}
