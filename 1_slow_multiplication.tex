@@ -35,14 +35,18 @@
 
     \smallskip
     Solange alle Multiplikation von zwei Wörtern stets durch den gleichen Schaltkreis ermittelt wird, kann aber ebenfalls davon ausgegangen werden, dass die Laufzeitkosten konstant sind.
+\end{remark}
 
-    \medskip
-    Es ist jedoch nicht unbedingt klar, dass die beiden Schaltkreise für Addition und Multiplikation gleich schnell operieren. In der Tat war auf echter Hardware lange ein deutlicher Unterschied zwischen den Laufzeiten einer Additions- und einer Multiplikationsinstruktion vorhanden. Teilweise war Multiplikation eine Größenordnung langsamer als Addition. Aus diesem Grund hat es sich auch in der theoretischen Analyse eingebürgert, nicht alle Operationen eines Multiplikationsalgorithmus zu zählen, sondern nur die Multiplikationen, weil diese mehr ins Gewicht fallen. Wir werden dieser Tradition auch folgen, aber soweit möglich trotzdem Buchführen, wie viele Additionen ein Algorithmus jeweils benötigt.
+\begin{remark}
+    Es ist jedoch nicht unbedingt klar, dass die beiden Schaltkreise für Addition und Multiplikation gleich schnell operieren. In der Tat war auf echter Hardware lange ein deutlicher Unterschied zwischen den Laufzeiten einer Additions- und einer Multiplikationsinstruktion vorhanden. Teilweise war Multiplikation eine Größenordnung langsamer als Addition. Aus diesem Grund hat es sich auch in der theoretischen Analyse eingebürgert, nicht alle Operationen eines Multiplikationsalgorithmus zu zählen, sondern nur die Multiplikationen, weil diese mehr ins Gewicht fallen.
+    
+    \smallskip
+    Wir werden dieser Tradition auch folgen, aber trotzdem Buchführen, wie viele Additionen ein Algorithmus jeweils benötigt, wenn auch im Zweifelsfall etwas weniger genau. Insbesondere werden wir keine Additionen zählen, die Schleifenvariablen inkrementieren. Die sind Teil des Konstrukts \enquote{Schleife}, nicht unseres spezifischen Algorithmus. (Und wie die Schleifen tatsächlich ausgeführt werden, ist außerdem zu schwer vorhersagbar, um konkrete Anzahlen an Additionen vorhersagen zu können)
 \end{remark}
 
 \begin{remark}
     Der offensichtliche Algorithmus für Multiplikation beliebiger natürlicher Zahlen ergibt sich direkt durch Anwendung des Distributivgesetzes:
-    \[\left(\sum_{i=0}^{n-1}\ a_i g^i \right)\cdot\left(\sum_{i=0}^{n-1} b_i g^i\right) = \sum_{i,j} (a_i b_j) g^{i+j} = \sum_{k=0}^{2n-1} \left(\sum_{i+j=k}a_i b_j\right)g^k\]
+    \[\left(\sum_{i=0}^{n-1}\ a_i g^i \right)\cdot\left(\sum_{j=0}^{n-1} b_j g^j\right) = \sum_{i,j} (a_i b_j) g^{i+j} = \sum_{k=0}^{2n-2} \left(\sum_{i+j=k}a_i b_j\right)g^k\]
     Indem wir alle $n^2$ Produkte $a_i b_j$ berechnen und geeignet aufsummieren, erhalten wir das Produkt $A\cdot B$.
 
     \medskip
@@ -93,7 +97,7 @@
 \end{algorithm}
 
 \begin{proposition}[Korrektheit]
-    Der Algorithmus~\ref{alg:slow_multiplication} ist korrekt. Er arbeitet in $O(n^2)$ Multiplikation, $O(n^2)$ Additionen und benötigt $O(n)$ Speicher.
+    Der Algorithmus~\ref{alg:slow_multiplication} ist korrekt. Er benötigt $n^2$ Multiplikation, $O(n^2)$ Additionen und benötigt $n+O(1)$ Speicher.
 \end{proposition}
 \begin{proof}
     Das meiste ist relativ klar. Wir beginnen, indem wir $C$ mit den Ziffern $000\ldots 000$ initialisieren. Dann addieren wir für jedes $i$ die Zahl $a_i g^i\cdot B$ zu $C$, indem wir $a_i \cdot B$ berechnen und auf die Ziffern $\ldots c_{i+2}c_{i+1}c_i$ addieren, und speichern das Ergebnis wieder in $C$.
@@ -104,11 +108,24 @@
     \smallskip
     Damit das funktioniert, müssen wir die mit \lstinline{!!} markierte Behauptung beweisen:
 
-    Das Produkt zweier Ziffern $a_i,b_j\leq g-1$ ist höchstens $(g-1)^2=g^2-2g+1$ und die Addition von zwei weiteren Ziffern $z\leq g-1$ führt zu einem Maximum von $g^2-1$, was echt kleiner $g^2$ ist, also wirklich maximal zwei Ziffern hat. Der Übertrag $z$ ist also auch in der nächsten Iteration maximal eine Ziffer groß.
+    Das Produkt zweier Ziffern $a_i,b_j\leq g-1$ ist höchstens $(g-1)^2=g^2-2g+1$ und die Addition von zwei weiteren Ziffern $c,z\leq g-1$ führt zu einem Maximum von $g^2-1$, was echt kleiner $g^2$ ist, also wirklich maximal zwei Ziffern hat. Der Übertrag $z$ ist also auch in der nächsten Iteration maximal eine Ziffer groß.
 \end{proof}
 
 \begin{remark}
+    Wie wir eben gezeigt haben, ist es möglich, einen Schaltkreis zu bauen, der vier Wörter $a,b,c,z$ als Input nimmt, und in einer einzigen Operation das 2-Wort breite Ergebnis $ab+c+z$ berechnet.
+    
+    \smallskip
+    Es ist von der konkreten Prozessorarchitektur abhängig, ob es tatsächlich eine solche Instruktion gibt. Wenn es sie gibt, sind überhaupt keine Additionsinstruktionen zusätzlich zu den Multiplikationen für unseren Algorithmus nötig.
+    
+    \smallskip
+    Wenn es diesen Schaltkreis nicht gibt, dann gibt es oft trotzdem $(a,b,c)\mapsto ab+c$, womit wir nur noch eine einzige Addition zusätzlich zur Multiplikation benötigen.
+\end{remark}
+
+\begin{remark}
     Der Algorithmus ist offenbar nicht davon abhängig, dass $A$ und $B$ die gleiche Anzahl an Ziffern haben. Etwas präziser könnten wir die Laufzeiten also als $O(nm)$ ausdrücken, wobei $n$ und $m$ die Längen der beiden Zahlen sind.
+    
+    \smallskip
+    Darin enthalten ist die Teilaussage, dass die Multiplikation mit einer kleinen Konstanten in $O(n)$ realisierbar ist. Das merken wir uns für später, weil wir es verwenden werden.
 \end{remark}
 
 \begin{remark}
@@ -154,18 +171,16 @@
     \end{lstlisting}
 \end{algorithm}
 
-\begin{proposition}[Korrektheit und Laufzeit]
-    Der Algorithmus ist korrekt, hat laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $O(n)$.
+\begin{proposition}[Korrektheit und Laufzeit]\label{alg:double-and-add:correctness}
+    Der Algorithmus ist korrekt, hat Laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $n+O(1)$.
 \end{proposition}
+\begin{proof}
+Übung.
+\end{proof}
 
 \begin{remark}
-    Da man in der Praxis eben nicht mit beliebigen $g$, sondern sehr häufig mit Zweierpotenzen $g=2^k$ arbeitet, ist für die Berechnung von $\frac{\log(2)}{\log(g)}$ keine Fließkomma-Arithmetik nötig, da sich alles zu $\frac{1}{k}$ kürzt. Die Länge von $A$ in bits ist typischerweise klein genug, damit die Division \lstinline{a.length / k} in einer einzigen Hardware-Instruktion berechnet werden kann.
+    Da man in der Praxis eben nicht mit beliebigen $g$, sondern mit Zweierpotenzen $g=2^k$ arbeitet, ist für die Berechnung von $\frac{\log(2)}{\log(g)}$ keine Fließkomma-Arithmetik nötig, da sich alles zu $\frac{1}{k}$ kürzt. Die Länge von $A$ in bits ist typischerweise klein genug, damit die Division \texttt{a.length / k} in einer einzigen Hardware-Instruktion berechnet werden kann.
 
     \smallskip
-    Aber selbst wenn nicht: Man kann zeigen, dass die asymptotische Komplexität von Division im Wesentlichen die gleiche wie die der Multiplikation ist, d.h.\ man kann den Quotienten in $O(\log(a.length)\log(k)) = O(\log(n))$ bestimmen (da $k$ konstant ist), was gegenüber der Gesamtkomplexität von $O(n^2)$ nicht ins Gewicht fällt.
-
-    \smallskip
-    Mehr noch: Wenn $k$ selbst eine Zweierpotenz ist, dann ist die Division durch einen Bitshift realisierbar.
+    Mehr noch: Wenn $g$ selbst eine Zweierpotenz ist, dann besteht eigentlich kein Unterschied zwischen \textt{Array<Bit>} und \texttt{Array<Digit>} und es ist überhaupt keine zusätzliche Aktion nötig.
 \end{remark}
-
-% TODO square-and-multiply in Übungsaufgabe
