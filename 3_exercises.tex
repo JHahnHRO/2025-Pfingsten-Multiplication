@@ -1,0 +1,27 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\begin{sheet}
+
+\begin{problem}[title={Vandermonde-Determinante}]
+Beweise, dass die Vandermonde\footnote{Alexandre-Théophile Vandermonde, 1735--1796, französischer Mathematiker, Musiker und Chemiker}-Matrix
+\[V:=\begin{pmatrix}
+s_0^0 & s_0^1 & \cdots & s_0^d \\
+s_1^0 & s_1^1 & \cdots & s_1^d \\
+\vdots & \vdots & \ddots & \vdots \\
+s_d^0 & s_d^1 & \cdots & s_d^d
+\end{pmatrix}\]
+die Determinante
+\[\det(V) = \prod_{0\leq i<j\leq d+1} (s_j-s_i)\]
+hat. Insbesondere ist $V$ genau dann invertierbar, wenn die $s_i$ paarweise verschieden sind.
+\end{problem}
+
+\begin{problem}
+Verallgemeinere den Toom-Cook-$k$-Algorithmus zum Toom-Cook-$k_1,k_2$-Algorithmus, der $A$ in $k_1$ und $B$ in $k_2$ kleinere Stücke zerlegt.
+\end{problem}
+
+\begin{remark}
+Der Toom-Cook-$2,3$-Algorithmus wird manchmal auch als Toom-Cook-$2.5$ bezeichnet.
+\end{remark}
+
+\end{sheet}
