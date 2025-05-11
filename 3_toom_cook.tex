@@ -53,6 +53,7 @@ Vorberechnung:
 \item Die Interpolationsmatrix $\mathcal{I}\in\IQ^{(2k-1)\times(2k-1)}$ mit $(\mathcal{I}^{-1})_{\ell,m} = s_\ell^m$ mit $0\leq\ell,m < 2k$.
 \end{itemize}
 
+%! suppress = MissingLabel
 \begin{lstlisting}
 Array<Digit> multiply(Array<Digit> a, Array<Digit> b){
     n := max(a.length, b.length);
@@ -161,7 +162,7 @@ Selbst wenn wir nur $O(n^{1.1})$ erreichen wollen (also $e=10$), dann müssen wi
 Nichts desto trotz ist diese Überlegung für die Theorie interessant. Wenn man für jedes $k$ einen geeigneten Cutoff vorberechnet, dann kann man alle Toom-Cook-Algorithmus zu einem gemeinsamen Algorithmus kombinieren, der für hinreichend große Zahlen Toom-Cook-$k$ mit immer größer werdendem $k$ verwendet. Dieser Algorithmus ist dann offenbar asymptotisch schneller als jeder einzelne Toom-Cook-Algorithmus, also in $o(n^{1+\varepsilon})$ für jedes $\varepsilon>0$.
 
 \smallskip
-Es ist nicht genau bekannt, welche Komplexitätsklasse man mit diesem Ansatz erreichen kann, aber eine Implementierung von Knuth\footnote{Donald Ervin Knuth, geb. 1938, amerikanischer Mathematiker und Informatiker, Autor der \enquote{The Art of Computer Programming} Buchreihe.} erzielt eine Komplexität von $O(n 2^{\sqrt{2 \log(n)}} \log(n))$, aber es ist nicht bekannt, ob das die beste Implementierung ist.
+Es ist nicht genau bekannt, welche Komplexitätsklasse man mit diesem Ansatz erreichen kann, aber eine Implementierung von Knuth\footnote{Donald Ervin Knuth, geb. 1938, amerikanischer Mathematiker und Informatiker, Autor der \enquote{The Art of Computer Programming} Buchreihe.} erzielt eine Komplexität von $O(n 2^{\sqrt{2 \log_2(n)}} \log(n))$, aber es ist nicht bekannt, ob das die beste Implementierung ist.
 \end{remark}
 
 \begin{remark}
