@@ -97,13 +97,13 @@
 \end{algorithm}
 
 \begin{proposition}[Korrektheit]
-    Der Algorithmus~\ref{alg:slow_multiplication} ist korrekt. Er benötigt $n^2$ Multiplikation, $O(n^2)$ Additionen und benötigt $n+O(1)$ Speicher.
+    Der Algorithmus~\ref{alg:slow_multiplication} ist korrekt. Er benötigt $n^2$ Multiplikation, $O(n^2)$ Additionen und benötigt $2n+O(1)$ Speicher.
 \end{proposition}
 \begin{proof}
     Das meiste ist relativ klar. Wir beginnen, indem wir $C$ mit den Ziffern $000\ldots 000$ initialisieren. Dann addieren wir für jedes $i$ die Zahl $a_i g^i\cdot B$ zu $C$, indem wir $a_i \cdot B$ berechnen und auf die Ziffern $\ldots c_{i+2}c_{i+1}c_i$ addieren, und speichern das Ergebnis wieder in $C$.
 
     \smallskip
-    Wir addieren in jeder Iteration der inneren Schleife die 1er Ziffer des Produkts $p:=a_i \cdot b_j$ an die korrekte Stelle $c_{i+j}$. Wir addieren außerdem den Übertrag der letzten Iteration an diese Stelle und merken uns den Übertrag, den wir dabei erhalten, für die nächste Iteration.
+    Wir addieren in jeder Iteration der inneren Schleife die 1er-Ziffer des Produkts $p:=a_i \cdot b_j$ an die korrekte Stelle $c_{i+j}$. Wir addieren außerdem den Übertrag der letzten Iteration an diese Stelle und merken uns den Übertrag, den wir dabei erhalten, für die nächste Iteration.
 
     \smallskip
     Damit das funktioniert, müssen wir die mit \lstinline{!!} markierte Behauptung beweisen:
@@ -163,7 +163,7 @@
         if(a[i] == 1){
           c := add(c, b2);
         }
-        b2 := add(b2,b2);
+        b2 := add(b2, b2);
       }
 
       return c;
@@ -172,7 +172,7 @@
 \end{algorithm}
 
 \begin{proposition}[Korrektheit und Laufzeit]\label{alg:double-and-add:correctness}
-    Der Algorithmus ist korrekt, hat Laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $n+O(1)$.
+    Der Algorithmus ist korrekt, hat Laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $4n+O(1)$.
 \end{proposition}
 \begin{proof}
 Übung.
@@ -182,5 +182,5 @@
     Da man in der Praxis eben nicht mit beliebigen $g$, sondern mit Zweierpotenzen $g=2^k$ arbeitet, ist für die Berechnung von $\frac{\log(2)}{\log(g)}$ keine Fließkomma-Arithmetik nötig, da sich alles zu $\frac{1}{k}$ kürzt. Die Länge von $A$ in bits ist typischerweise klein genug, damit die Division \texttt{a.length / k} in einer einzigen Hardware-Instruktion berechnet werden kann.
 
     \smallskip
-    Mehr noch: Wenn $g$ selbst eine Zweierpotenz ist, dann besteht eigentlich kein Unterschied zwischen \textt{Array<Bit>} und \texttt{Array<Digit>} und es ist überhaupt keine zusätzliche Aktion nötig.
+    Mehr noch: Wenn $g$ selbst eine Zweierpotenz ist, dann besteht eigentlich kein Unterschied zwischen \texttt{Array<Bit>} und \texttt{Array<Digit>} und es ist überhaupt keine zusätzliche Aktion nötig.
 \end{remark}
