@@ -1,0 +1,13 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Idee}
+
+\begin{remark}
+    Wie wir im Zusammenhang mit den Toom-Cook-Algorithmen gesehen haben, kann man Multiplikation großer Zahlen auf Multiplikation von ganzzahligen Polynomen mit kleinen Koeffizienten zurückführen. Und je höher wir den Grad der Polynome wählen, desto effizienter können wir sein, zumindest asymptotisch. Wir haben aber auch gesehen, dass das in Praxis nicht tauglich ist, weil der Overhead quadratisch mit dem Grad der Polynome zu wachsen scheint. Wir können also nicht einfach Grad=Anzahl der Ziffern wählen, weil wir sonst wieder bei einem $O(n^2)$-Algorithmus wären.
+
+    \medbreak
+    Ist das also das Ende? Nur, wenn Auswertung eines Polynoms vom Grad $<m$ in $m$ Stützstellen sowie die Interpolation von $m$ Werten zurück zu den Polynomkoeffizienten in $\Theta(m^2)$ sind. Aber wer sagt denn, dass quadratisch die bestmögliche Laufzeit ist?
+
+    In der Tat können wir sehr viel besser auswerten und interpolieren, da wir ja die völlig freie Wahl der Stützstellen haben. Es stellt sich heraus, dass Einheitswurzeln eine besonders eine effiziente Wahl sind, weil die Vandermonde-Matrix dann besonders viel Struktur hat, die man ausnutzen kann, um Rechnungen einzusparen. Das ist die Idee hinter der schnellen Fourier-Transformation (FFT).
+\end{remark}

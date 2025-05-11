@@ -1,0 +1,68 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Der Schönhage-Strassen-Algorithmus}\label{schoenhage-strassen}
+
+\begin{corollary}
+    Die Multiplikation zweier Zahlen $A,B\in\IZ$ mit $n$ Ziffern kann mit $O(n\log(n))$ arithmetischen Operationen auf komplexen Zahlen und Speicher für $O(n)$ komplexe Zahlen berechnet werden.
+\end{corollary}
+\begin{proof}
+    Mittels FFT ist es jetzt klar wie es geht: Wir nutzen die Ziffern von $A$ und $B$ als Koeffizienten von Polynomen
+    \begin{align*}
+        \alpha(X) &= a_0 + a_1 X^1 + \ldots a_{n-1} X^{n-1}\\
+        \beta(X)  &= b_0 + b_1 X^1 + \ldots b_{n-1} X^{n-1}
+    \end{align*}
+    Berechnen $\alpha(\zeta_n^i)$ und $\beta(\zeta_n^i)$ für alle $i=0,1,\ldots,n-1$ in $O(n\log(n))$ mittels FFT. $\gamma(\zeta_n^i) = \alpha(\zeta_n^i)\cdot\beta(\zeta_n^i)$ auszurechnen, kostet noch einmal $n$ Multiplikationen. Die inverse Fourier-Transformation wird ebenfalls mit FFT in $O(n\log(n))$ ausgerechnet.
+
+    Damit haben wir die Koeffizienten von $\gamma(X)$. Man beachte, dass die Koeffizienten von $\gamma$ exakt ganzzahlig sind, auch wenn die Zwischenergebnisse komplexe Zahlen waren!
+
+    Durch Einsetzen von unserer Zahlenbasis $X=g$ erhalten wir das Produkt $A\cdot B = C=\gamma(g)$. Das geht in $O(n)$ elementaren Operationen auf den Ziffern.
+\end{proof}
+
+\begin{remark}
+    Haben wir damit das Problem gelöst? Nicht ganz, denn niemand sagt uns, dass \enquote{arithmetische Operationen auf komplexen Zahlen} genauso billig sind wie Operationen auf einzelnen Ziffern, was ja eigentlich unsere Maßeinheit ist.
+
+    \medskip
+    Da wir a priori wissen, dass die Koeffizienten $\gamma_0, \gamma_1, \ldots, \gamma_{2n-1}$, die wir berechnen wollen, ganze Zahlen sind, können wir das Rechnen mit unendlicher Präzision durch eine Rechnung mit hinreichend langen Festkomma-Zahlen ersetzen. Die Länge der Festkomma-Zahlen muss so bestimmt werden, dass das Endergebnis einen Fehler $<\frac{1}{2}$ hat, sodass wir durch simples Runden zur nächsten ganzen Zahl das Ergebnis bekommen.
+
+    Sobald wir uns erst einmal auf diese Länge festgelegt haben, ist das Rechnen mit Festkomma-Zahlen wieder nur die Addition und Multiplikation von ganzen Zahlen dieser Länge. Solange wir feststellen, dass die notwendige Anzahl an Ziffern für die FFT und iFFT der Länge $n$ signifikant kleiner als $n$ ist, können wir so einen rekursiven Multiplikationsalgorithmus konstruieren.
+
+    \medskip
+    Schönhage\footnote{Arnold Schönhage, dt. Mathematiker, geb. 1934} und Strassen\footnote{Volker Strassen, dt. Mathematiker, geb. 1936} haben genau solche eine Analyse durchgeführt und sind zu folgendem Ergebnis gekommen.
+\end{remark}
+
+\begin{theorem}[Schönhage-Strassen I]
+    Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)\cdot\log(\log(n))^{1+\varepsilon})$ elementaren arithmetischen Operationen auf Ziffern möglich. Präziser kann man für jedes $k\in\IN$ die Komplexität
+    \[O(n\cdot \log(n) \cdot \log(\log(n)) \cdots (\log^k(n))^2)\]
+    erreichen.
+\end{theorem}
+
+\begin{remark}
+    Der FFT-Algorithmus, den wir betrachtet haben, ist nicht fundamental davon abhängig, dass mit komplexen Zahlen gerechnet wird. Man kann sich leicht davon überzeugen, dass man $\IC$ durch jeden kommutativen Ring $R$ ersetzen kann, der
+    \begin{enumerate}
+        \item eine primitive $n$-te Einheitswurzel $\zeta_n$ enthält.
+        \item ein multiplikatives Inverses von $n$ enthält.
+    \end{enumerate}
+
+    Wenn wir eine Zweierpotenz $n=2^\ell$ verwenden wollen, ist das z.B.\ vom Restklassenring $\IZ/(2^{2^\ell}+1)$ erfüllt, denn $\zeta:=2$ erfüllt per Konstruktion $\zeta^{2^\ell} = -1$ und ist somit eine $2^{2\ell}$-te primitive Einheitswurzel. Die Restklassen repräsentiert man natürlicherweise durch ganze Zahlen zwischen $0$ und $2^{2^\ell}$, sodass man keine komplexe Arithmetik benötigt, sondern nur ganzzahlige Arithmetik\footnote{Man beachte, dass wegen $2^{2^\ell} \equiv -1$ die notwendigen Divisionen-mit-Rest durch Additionen, Subtraktionen und Bitshifts realisiert werden können}.
+
+    \smallskip
+    Natürlich ist $2^{2^\ell}=2^n$ wieder in der Größenordnung, in der unsere Inputs $A$ und $B$ waren, denn die hatten ja $n$ Ziffern. Wenn wir $g=2^{32}$ verwenden, dann hat $2^n$ zwar trotzdem weniger Bits als $g^n$, aber nur um einen konstanten Faktor weniger, sodass wir diesen Ansatz rekursiv anwenden müssen, wenn wir Arithmetik in $\IZ/(2^{2^\ell}+1)$ verwenden wollen.
+
+    Wenn wir sowieso rekursiv arbeiten, dann hindert uns aber niemand daran, wie bei den vorherigen Algorithmen eine passende Zwischengröße $G$ zu wählen, sodass unsere Rekursionsschritte mit einem deutlich kleineren $n$ (und damit einem deutlich kleineren $\ell$) zufrieden sind.
+
+    \medskip
+    All diese Überlegungen haben Schönhage und Strassen auch durchgeführt und haben so ihr vorheriges Ergebnis wie folgt verbessert:
+\end{remark}
+
+\begin{theorem}[Schönhage-Strassen II]
+    Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)\cdot\log(\log(n)))$ elementaren arithmetischen Operationen auf Ziffern möglich.
+\end{theorem}
+
+\begin{remark}
+    Beliebige Zahlen $n$ sind natürlich keine Zweierpotenzen. Wir können zwar o.B.d.A.\ annehmen, dass $n$ eine Zweierpotenz ist, indem wir den Zahlen $A$ und $B$ ggf. einfach ein paar Nullen voranstellen, aber im Extremfall verdoppelt das die Länge der Zahlen.
+
+    Für die asymptotische Komplexität ist ein Faktor 2 nicht relevant, für die Praxis aber schon, da der Schönhage-Strassen-Algorithmus ja sowieso erst eingesetzt wird, wenn die Inputs sehr groß sind. \footnote{Cutoff in GMP liegt bei mehreren tausend Wörtern abhängig von der verwendeten Hardware}
+
+    Wenn wir also alleine unsere Inputs schon Kilo- und Megabytes groß sind, dann ist selbst ein konstanter Faktor im Speicherbedarf störend.
+\end{remark}

@@ -3,13 +3,13 @@
 
 \subsection{Ringe}\label{ringe}
 \begin{definition}
-    Ein \udot{Ring} $R=(R,+,\cdot)$ besteht aus einer Menge $R$ zusammen mit Abbildungen ${+} : R \times R \to R$, $(x,y) \mapsto x+y$, genannt \enquote{Addition}, und $\cdot : R\times R \to R$, $(x,y) \mapsto x\cdot y = xy$, genannt \enquote{Multiplikation}, welche die folgenden Bedingungen erfüllen:
+    Ein \udot{Ring} $R=(R,+,\cdot,0,1)$ besteht aus einer Menge $R$ zusammen mit Abbildungen ${+} : R \times R \to R$, $(x,y) \mapsto x+y$, genannt \enquote{Addition}, und $\cdot : R\times R \to R$, $(x,y) \mapsto x\cdot y = xy$, genannt \enquote{Multiplikation}, sowie zwei Elementen $0,1\in R$, welche die folgenden Bedingungen erfüllen:
     \begin{description}
-        \item{(R1)} $(R,+)$ ist eine abelsche Gruppe. Das neutrale Element bezeichnen wir mit $0_R$ und nennen es \udot{Nullelement} des Rings.
+        \item{(R1)} $(R,+,0)$ ist eine abelsche Gruppe. Das neutrale Element $0$ nennen wir \udot{Nullelement} des Rings.
         \item{(R1)} Assoziativität der Multiplikation:
         \[\forall x,y,z\in R: (xy)z = x(yz)\]
         \item{(R3)} Neutrales Element der Multiplikation:
-        \[\exists 1_R\in R \forall x\in R: x\cdot 1_R=x=1_R\cdot x\]
+        \[\exists 1_R\in R \forall x\in R: x\cdot 1=x=1\cdot x\]
         Dieses Element nennen wir \udot{Einselement} des Rings.
         \item{(R4)} Distributivgesetze:
         \[\forall x,y,z\in R: x(y+z)=xy+xz \wedge (x+y)z=xz+yz\]
@@ -20,7 +20,7 @@
     \end{description}
     gilt.
 
-    Der Kürze halber schreibt man oft nur $R$ statt $(R,+,\cdot)$, wenn aus dem Kontext klar ist, welche Addition und Multiplikation gemeint sind.
+    Der Kürze halber schreibt man oft nur $R$ statt $(R,+,\cdot,0,1)$, wenn aus dem Kontext klar ist, welche Addition und Multiplikation gemeint sind.
 \end{definition}
 
 \begin{example}
@@ -29,9 +29,6 @@
         Multiplikation.
         \item Der Nullring $R=\set{0}$ mit $0+0=0\cdot0=0$ ist ein Ring, mit $1_R=0_R=0$. In der Tat ist das der einzige Ring, in dem $0_R=1_R$ gilt (Übung).
         \item Ist $R$ ein Ring und $n\in\IN$, so ist die Menge $R^{n\times n}$ aller $n\times n$-Matrizen über $R$ ein Ring bezüglich Matrixaddition und -multiplikation (s. unten).
-        \item $\IZ/n$ der Ringe der \enquote{Restklassen modulo $n$} besteht aus den Äquivalenzklassen
-        \[[a] := \Set{b\in\IZ | a\equiv b \mod n}\]
-        zusammen mit der Addition $[a]+[b]:=[a+b]$ und der Multiplikation $[a]\cdot[b]:=[ab]$.
         \item Die Menge $R[X]$ aller Polynome mit Koeffizienten aus $R$ ist ein
         Ring zusammen mit der üblichen Addition:
         \[\sum_{i=0}^n a_i X^i + \sum_{i=0}^n b_i X^i := \sum_{i=0}^{n} (a_i+b_i)X^i\]
@@ -43,15 +40,45 @@
 \begin{lemma}
     Sei $R$ ein Ring. Dann:
     \begin{enumerate}
-        \item Es gibt nur ein Einselement in $R$.
         \item $\forall x \in R : 0\cdot x = x \cdot 0 = 0$.
         \item $\forall x,y \in R : x\cdot(-y)=(-x)\cdot y = -(xy)$.
         \item $(-1)^2 = 1$.
     \end{enumerate}
 \end{lemma}
-\begin{proof}
-    Übung.
-\end{proof}
+
+\begin{lemmadef}[Ideale und Quotienten]
+    Es sei $R$ ein Ring. Eine Teilmenge $I\subseteq R$ heißt \udot{Ideal}, wenn
+    \begin{description}
+        \item[(I1)] $I$ ist eine Untergruppe von $(R,+)$, d.h.
+        \[0\in I \wedge \forall x,y\in I: x+y\in I \wedge -x\in I\]
+        \item[(I2)] $I$ ist unter Multiplikation mit beliebigen Elementen von $R$ abgeschlossen:
+        \[\forall x\in I, y\in R: xy,yx\in I\]
+    \end{description}
+
+    Ist nun $I \unlhd R$ ein Ideal, dann gilt:
+    \begin{enumerate}
+        \item Die Relation
+        \[x \equiv_I y :\iff x-y\in I\]
+        ist eine Äquivalenzrelation auf $R$
+        \item Der \udot{Quotientenring} $R/I$ ist definiert als die Menge der Äquivalenzklassen zusammen mit folgender Addition und Multiplikation
+        \[[x] +_{R/I} [y] := [x +_R y],  \quad [x] \cdot_{R/I} [y] := [x \cdot_R y]\]
+        Dies ist tatsächlich ein Ring.
+    \end{enumerate}
+\end{lemmadef}
+
+\begin{example}
+    In $R=\IZ$ sind die Ideale genau die Teilmengen $n\IZ:=\Set{nk | k \in\IZ}$ (Übung). Die Quotienten $\IZ/n\IZ$ nennt man auch \udot{Restklassenringe}.
+\end{example}
+
+\begin{theorem}[Chinesischer Restsatz]
+    Es sei $R$ ein Ring und $I,J\subseteq R$ zwei Ideale. Die natürliche Abbildung
+    \[ R\to R/I \times R/J, x\mapsto ([r]_{R/I}, [y]_{R/J})\]
+    ist
+    \begin{enumerate}
+        \item injektiv genau dann, wenn $I\cap J = \set{0}$, und
+        \item surjektiv genau dann, wenn $I+J=R$ oder äquivalent, wenn $\exists i\in I,j\in J: i+j=1$.
+    \end{enumerate}
+\end{theorem}
 
 \subsubsection{Matrizen}
 
@@ -152,7 +179,7 @@
     \label{matrizen:ring_eigenschaften}
     Matrizenringe $R^{n\times n}$ sind wirklich Ringe. Allgemeiner gilt selbst für rechteckige Matrizen:
     \begin{enumerate}
-        \item $(R^{n\times m},+)$ ist eine abelsche Gruppe.
+        \item $(R^{n\times m},+,0)$ ist eine abelsche Gruppe.
         \item Matrixmultiplikation ist assoziativ:
         \[\forall A\in R^{n\times m}, B\in R^{m\times p}, C\in R^{p\times q}: (AB)C = A(BC)\]
         \item Matrizenmultiplikation ist distributiv:

@@ -1,0 +1,108 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Fast Fourier Transform}\label{sec:fft}
+
+\begin{definition}[DFT]
+    Gegeben eine endliche Folge von Koeffizienten $a:=(a_0,a_1,\ldots,a_{n-1})\in\IC^n$ heißt die Folge $\hat{a}:=(\hat{a}_0,\hat{a}_1,\ldots,\hat{a}_{n-1})\in\IC^n$ der Zahlen gegeben durch
+    \[\hat{a}_i := \sum_{j=0}^{n-1} a_i \zeta_n^{-ij}\]
+    die \udot{diskrete Fourier-Transformation}, kurz \udot{DFT}, von $a$, wobei $\zeta_n\in\IC$ eine primitive $n$-te Einheitswurzel ist, d.h. $\zeta_n^n=1$ und $\zeta_n^i \neq 1$ für $i<n$, beispielsweise $e^{2\pi i / n}$.
+
+    \medskip
+    Das umgekehrte Problem, aus $\hat{a}$ wieder $a$ zu rekonstruieren, heißt entsprechend \udot{inverse DFT}.
+\end{definition}
+
+\begin{remark}
+    Die DFT ist allgemein für unstrukturierte Folgen von Zahlen definiert, weil sie in vielen verschiedenen Zusammenhängen auftritt, in denen diese Zahlenfolgen unterschiedliche Bedeutung und Herkunft haben.
+
+    Für unser Ziel ist es aber zweckmäßig, die Zahlen $a$ als Koeffizienten eines Polynoms
+    \[\alpha(X) := a_0 + a_1 X + \ldots + a_{n-1}X^{n-1} \in\IC[X]\]
+    aufzufassen. Dann ist nämlich $\hat{a}_i = \alpha(\zeta_n^{-i})$.
+\end{remark}
+
+\begin{lemma}
+    Es stellt sich heraus, dass die iDFT im Wesentlichen genauso aussieht wie die DFT selbst. Mit den Bezeichnungen von oben gilt:
+    \[a_i = \frac{1}{n}\sum_{k=0}^{n-1} \hat{a}_k \zeta_n^{ik}\]
+\end{lemma}
+\begin{proof}
+    Definitionsgeschubse.
+\end{proof}
+
+\begin{remark}
+    Eben weil es so viele verschiedene Arten gibt, in denen die DFT auftreten kann, gibt es verschiedene Konventionen, die Definition zu schreiben, die aber im Wesentlichen äquivalent sind.
+
+    So kann man z.B.\ das andere Vorzeichen wählen und stattdessen $\alpha$ in $\zeta_n^{+i}$ auszuwerten. Da $\set{1, \zeta_n, \zeta_n^2, \ldots} = \set{1, \zeta_n^{-1}, \zeta_n^{-2}, \ldots}$ ist, führt das nur dazu, dass die Komponenten von $\hat{a}$ in einer anderen Reihenfolge auftreten, aber ansonsten die gleichen Werte haben.
+
+    Manchmal wird der Faktor $\frac{1}{n}$ auch für die DFT anstelle der iDFT verwendet. Beides zusammen führt im Wesentlichen dazu, dass das, was wir jetzt als iDFT bezeichnen, zur DFT erklärt wird und umgekehrt. Da Hin- und Rückrichtung aber sowieso zum Verwechseln ähnlich ist, macht das auch keinen großen Unterschied mehr, welche von den beiden Operationen man als DFT und welche man als iDFT bezeichent.
+
+    Manchmal wird der Faktor einfach gleichmäßig verteilt, sodass in beiden Formeln ein $\frac{1}{\sqrt{n}}$ vorkommt.
+\end{remark}
+
+\begin{theorem}[Gauss, Cooley-Tukey uvm.]
+    Ist $n$ eine Zweierpotenz, so ist möglich, die DFT eines Vektors $a\in\IC^n$ mit $n\log(n)$ komplexen Additionen und Multiplikationen und $n+O(1)$ Speicherbedarf zu berechnen.
+\end{theorem}
+\begin{remark}
+    Die Annahme, dass $n$ eine Zweierpotenz ist, ist in der Tat überflüssig. Sie ist nur für den konkreten Algorithmus nötig, den wir jetzt besprechen wollen. Es gibt andere Algorithmen, die für andere $n$ funktionieren und ebenfalls in $O(n\log(n))$ sind.
+\end{remark}
+\begin{proof}
+    Wir werden die DFT als Auswertung des Polynoms $\alpha$ in den $n$ Punkten
+    \[\zeta_n^0, \zeta_n^1,\zeta_n^2 \ldots, \zeta_n^{n-1}\]
+    betrachten.
+
+    \smallskip
+    Die erste nützliche Beobachtung ist, dass wir $\alpha$ hier in Wirklichkeit als Element von $\IC[X]/(X^n-1)$ auffassen können, da die Auswertung in $n$-ten Einheitswurzeln eh keinen Unterschied zwischen $X^n-1$ und $0$ feststellen kann, da ja $\zeta^n-1=0$ ist. Der Ring $\IC[X]/(X^n-1)$ wird nun mittels des chinesischen Restsatzes rekursiv in kleinere Ringe (jeweils mit halber Dimension) zerlegt:
+
+    Dabei benutzen wir in jedem Schritt, dass $X^{2k}-z^2 = (X^k-z)(X^k+z)$ gilt und das eine Zerlegung in paarweise teilerfremde Faktoren ist (wenn $z\neq 0$), sodass wir den chinesischen Restsatz tatsächlich anwenden können.
+
+    Da $n$ eine Zweierpotenz, $\zeta_n$ eine $n$-te Einheitswurzel und $1=\zeta_n^n$ ist, kann man per Induktion zeigen, dass man in jedem Schritt Faktoren der Form $X^k-\zeta_n^{ak}$ erhält.
+
+    \medskip
+    Am Beispiel von $n=8$ sieht das so aus wie in~\ref{fig:fft:example_n_equals_8} dargestellt.
+
+    \begin{figure}[hpt]
+        \begin{tikzcd}[sep=tiny, inner sep=0]
+            &&& \IC[X]/(X-\zeta_8^0) \\
+            && \IC[X]/(X^2-\underbrace{1}_{=\zeta_8^0}) \ar[ru]\ar[rd] & \\
+            &&& \IC[X]/(X-\zeta_8^4) \\
+            & \IC[X]/(X^4-\underbrace{1}_{=\zeta_8^0}) \ar[ruu]\ar[rdd] && \\
+            &&& \IC[X]/(X-\zeta_8^2) \\
+            && \IC[X]/(X^2-\underbrace{(-1)}_{\zeta_8^{2\cdot 2}}) \ar[ru]\ar[rd] & \\
+            &&& \IC[X]/(X-\zeta_8^6) \\
+            \IC[X]/(X^8-\underbrace{1}_{=\zeta_8^0}) \ar[ruuuu] \ar[rdddd] & & \\
+            &&& \IC[X]/(X-\zeta_8) \\
+            && \IC[X]/(X^2-\underbrace{i}_{=\zeta_8^2}) \ar[ru]\ar[rd] & \\
+            &&& \IC[X]/(X-\zeta_8^5) \\
+            & \IC[X]/(X^4-\underbrace{(-1)}_{=\zeta_8^4}) \ar[ruu]\ar[rdd] && \\
+            &&& \IC[X]/(X^2-\zeta_8^3) \\
+            && \IC[X]/(X^2-\underbrace{(-i)}_{=\zeta_8^{3\cdot 3}}) \ar[ru]\ar[rd] & \\
+            &&& \IC[X]/(X^2-\zeta_8^7)
+        \end{tikzcd}
+        \caption{FFT am Beispiel $n=8$}
+        \label{fig:fft:example_n_equals_8}
+    \end{figure}
+
+    Man beachte, dass wir am Ende die Reduktionen auf die eindimensionalen Quotienten $\IC[X]/(X - \zeta_n^i)$ erhalten, also die Auswertung im Punkt $\zeta_n^i$, also genau die $i$-te Komponente der DFT\@.
+
+    \medskip
+    Die Laufzeit dieses Algorithmus kommt daher, dass die Reduktion von $\IC[X]/(X^k-z^2)$ zu $\IC[X]/(X^{k/2}-z)$ mit $k/2$ komplexen Multiplikationen und Additionen erledigt werden kann:
+
+    Wir schreiben eine Restklasse $[f] \in \IC[X]/(X^k-z^2)$ als Polynom vom Grad $\leq k-1$:
+    \[f \equiv f_0 + f_1 X + f_2 X^2 + \ldots f_{k-1}X^{k-1} \mod X^k-z^2\]
+    und gruppieren jetzt nach Koeffizienten größergleich bzw. kleiner als $k/2$:
+    \begin{align*}
+        f \equiv & (f_0     &+ f_1 X      &+ \ldots + f_{k/2-1}X^{k/2-1}) + \\
+        & (f_{k/2} &+ f_{k/2+1}X &+ \ldots + f_{k-1}X^{k/2-1})X^{k/2} \mod X^k-z^2
+    \end{align*}
+    Da wir dieses Polynom nun modulo $X^{k/2}-z$ reduzieren wollen, können wir $X^{k/2}$ durch die Konstante $z$ ersetzen:
+    \[f \equiv (f_0+f_{k/2}z) + (f_1+f_{k/2+1}z)X^1+(f_2+f_{k/2+2}z)X^2 + \ldots (f_{k/2}+f_{k-1}z)X^{k/2-1} \mod X^{k/2}-z\]
+    Das sind also genau $k/2$ komplexe Multiplikationen und $k/2$ Additionen, die wie für diese Reduktion benötigen.
+
+    \medskip
+    In jedem Reduktionsschritt benötigen wir das zweimal: Wir reduzieren von $\IC[X]/(X^k-z^2) = \IC[X]/(X^k-(-z)^2)$ zu $\IC[X]/(X^{k/2}-z)$ und zu $\IC[X]/(X^{k/2}-(-z))$.
+    Das machen wir für mehrere $k$, sodass wir am Ende bei genau $n$ Additionen bzw. Multiplikationen in jeder Ebene der Rekursion landen.
+
+    \medskip
+    Dass der Speicherbedarf $O(n)$ ist, folgt daraus, dass wir in jedem Reduktionsschritt die Anzahl der Faktoren verdoppeln, aber jeder Faktor nur noch halb so groß ist. Im Beispiel $n=8$ beginnen wir etwa mit einem Vektor der Länge $8$, reduzieren auf zwei Vektoren der Länge $4$, reduzieren auf vier Vektoren der Länge $2$ und schließlich acht Vektoren der Länge $1$. Für jede neue Ebene der Rekursion benötigen wir nur Speicher für genau $n$ neue komplexe Zahlen.
+
+    Wenn wir die $n$ Zahlen der vorherigen Level wegwerfen, nachdem wir sie nicht mehr benötigen, kommen wir mit Speicher für $2n$ Zahlen aus. Wenn wir die Formel genau angucken, sehen wir, dass wir immer die $i$-ten Koeffizienten der beiden Reduktionen aus dem $i$-ten und $(i+k/2)$-ten Koeffizient des Inputs berechnen. Das heißt, dass wir den Input einfach direkt mit dem Ergebnis überschreiben können und mit $n+O(1)$ Speicher auskommen.
+\end{proof}

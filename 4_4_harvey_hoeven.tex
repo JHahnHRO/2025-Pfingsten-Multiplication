@@ -1,0 +1,63 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{$O(n\log(n))$}
+
+\begin{remark}
+    Natürlich stellt sich die unmittelbare Frage, wie weit man dieses Spiel treiben kann und was das tatsächliche Optimum für Multiplikation ist.
+
+    Schönhage \& Strassen stellten folgende Vermutung auf
+\end{remark}
+
+\begin{conjecture}[Schönhage-Strassen]
+    Multiplikation von $n$-Bit Zahlen ist in $\Theta(n\log(n))$ möglich.
+\end{conjecture}
+
+\begin{theorem}[Harvey-Hoeven, 2019]
+    Die Schönhage-Strassen-Vermutung ist wahr.
+\end{theorem}
+
+\begin{remark}
+    Der Beweis ist komplex. Er kombiniert geschickt verschiedene Ideen, um den FFT-Ansatz zu optimieren.
+\end{remark}
+
+\begin{remark}
+    Eine grundlegende Idee ist, dass eine FFT der Länge $n_1 n_2$ durch eine $n_1\times n_2$ zweidimensionale FFT (oder noch mehr Faktoren) zu ersetzen. Eine zweidimensionale FT von $(a_{ij})$ ist definiert durch
+    \[\hat{a}_{ij} := \sum_{k=0}^{n_1-1} \sum_{l=0}^{n_2-1} a_{kl} \zeta_{n_1}^{-ki} \zeta_{n_2}^{-lj}\]
+    Analog sind multidimensionale FTs definiert.\footnote{Wer's kennt: Abstrakt formuliert heißt das nur, dass die $n_1\times n_2$-FT das Tensorprodukt der $n_1$-FT und der $n_2$-FT ist. Aus dem Grund übertragen sich alle Algorithem für 1D-Fouriertransformationen auch auf multidimensionale FTs.} Der eindimensionale FFT-Algorithmus überträgt sich in natürlicher Weise auf den multidimensionalen Fall.
+
+    \medskip
+    Für unseren Ansatz, FFT zu benutzen um Polynome zu multiplizieren, bedeutet das, dass man nicht nur das $g$ in
+    \[A = a_0 + a_1 g + a_2 g^2 + \ldots\]
+    durch eine Unbekannte $X$ ersetzt, sondern dass man zusätzlich $g^{n_1}$ durch eine weitere Unbekannte $Y$ ersetzt. Jeder Exponenten $e<n_1 n_2$ kann eindeutig als $e'+e'' n_1$ mit $e'<n_1, e''<n_2$ geschrieben werden und so wird $g^e$ durch $X^{e'} Y^{e''}$ ersetzt. So erhält man statt eines Polynoms in einer Variablen ein Polynom in zwei (oder noch mehr) Variablen, dessen Exponenten durch $n_1$ bzw. $n_2$ beschränkt sind.
+
+    \medskip
+    Natürlich ist nicht jede Zahl $n$ nichttrivial als $n_1 n_2$ faktorisierbar. Da wir aber jederzeit $A$ und $B$ eine Null voranstellen können, können wir jederzeit zu $n+1$ übergehen und so eine zusammengesetzte Zahl erhalten, wenn $n$ zufällig eine Primzahl war. Wenn wir uns wenige (!) Nullen mehr erlauben, können wir $n+k$ so wählen, dass möglichst viele möglichst kleine Faktoren vorkommen und somit maximal zerlegt werden kann.
+
+    \medskip
+    Eine zweidimensionale $n_1\times n_2$ FFT benötigt zwar trotzdem $O(n\log(n))$ Operationen, aber da wir nur $n_1$-te und $n_2$-te Einheitswurzeln benötigen anstatt $n$-te Einheitswurzeln, können wir mit deutlich kleineren Restklassenringen arbeiten und einschränken, wie oft der zu findende Multiplikationsalgorithmus rekursiv angewendet werden muss, bis die auftretenden Koeffizienten klein genug sind.
+\end{remark}
+
+\begin{remark}
+    Speziell für Primzahlen gibt es außerdem \enquote{Rader's trick}, der es erlaubt eine FFT der Länge $p$ auf eine FFT der Länge $p-1$ zurückzuführen. Dies ermöglicht weitere Freiheitsgrade bei der Wahl möglichst gut teilbarer Zahlen.
+\end{remark}
+
+\begin{remark}
+    Wenn man in der Situation ist, eine multidimensionale $n_1\times n_2\times \cdots\times n_d$ FFT mit Zweierpotenzen $n_1\leq n_2\leq \ldots\leq n_d$ durchzuführen, dann kann man in jeder Dimension außer der letzten die FFT in $O(n_i)$ statt $O(n_i \log(n_i))$ durchführen, indem man anstatt einer komplexen Zahl (oder einem Element eines Restklassenrings) als Einheitswurzel die Unbekannte $X_d \in R[X_d]/(X_d^{n_d}-1)$ verwendet, die ja ebenfalls eine $n_d$-te Einheitswurzel ist. Das Multiplizieren mit einer Unbekannten ist in Polynomringen völlig gratis, da es nur die Koeffizienten herum permutiert.
+
+    Wenn wir die $n_i$ alle in der Größenordnung $n^{1/d}$ wählen können, dann reduziert das den Aufwand für die FFTs von $\approx n\log(n)$ zu $\approx \frac{n\log(n)}{d}$.
+\end{remark}
+
+\begin{remark}
+    Harvey und Hoeven konnten zeigen, dass es immer genügend viele Zahlen \enquote{in der Nähe von $n$} gibt, dass man genügend schnell zu einer Zahl mit sehr vielen sehr kleinen Faktoren kommen kann und diese Faktoren klein genug sind.
+\end{remark}
+
+\begin{remark}
+    Die Details sind sehr alle technisch und der Algorithmus, der dabei herauskommt, ist so komplex und hat so viel Overhead, dass er nur auf dem Papier interessant ist. Der Overhead ist so gigantisch, dass kein praktisches Problem groß genug ist, damit der Harvey-Hoeven-Algorithmus den Schönhage-Strassen-Algorithmus tatsächlich schlägt.
+
+    \smallskip
+    Harvey und Hoeven selber schätzen, dass man Zahlen mit $\approx 10^{14}$ Ziffern benötigt, bevor sich ihr Algorithmus auszahlt.
+
+    \medskip
+    Während Schönhage-Strassen tatsächlich in Bibliotheken wie GMP implementiert ist und auch praktisch verwendet wird, ist mir (zum jetzigen Zeitpunkt) keine einzige Implementierung von Harvey-Hoeven bekannt.
+\end{remark}
