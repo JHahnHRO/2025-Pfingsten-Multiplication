@@ -1,0 +1,105 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\subsection{Landau-Notation}\label{landau-notation}
+
+\begin{remark}
+    Wir wollen uns damit auseinandersetzen, welche verschiedenen Algorithmen es gibt, um große Zahlen miteinander zu multiplizieren, und wie sie sich voneinander unterscheiden. Wir wollen insbesondere die Geschwindigkeit dieser Algorithmen untersuchen.
+
+    \medskip
+    Das ist nur leider ein relativ schwieriges Problem. Offensichtlich ist die Laufzeit vom Input abhängig. Zehn-stellige Zahlen und 1.000.000-stellige Zahlen zu multiplizieren wird offensichtlich unterschiedlich lange dauern. Also wollen wir nicht zwei Zahlen miteinander vergleichen und herausfinden, welche die größere ist, sondern zwei Funktionen, die uns die Laufzeit eines Algorithmus in Abhängigkeit von der Größe der Inputs berechnet.
+
+    \medskip
+    Es ist nicht von vornherein offensichtlich, wie das geschehen soll. Als Beispiel betrachte man
+    \[f(n) = 100n+2 \quad\text{vs.}\quad g(n) = 3n^2\]
+    Welches ist die \enquote{bessere} dieser Funktionen? Für $n\leq 33$ ist $g(n)$ die kleinere Zahl, für größere $n$ hingegen $f(n)$. Es scheint als sei keiner der beiden hypothetischen Algorithmen, die hinter diesen beiden Funktionen stehen, optimal für alle Inputs. Stattdessen würde man viel mehr einen hybriden Algorithmus benutzen wollen, der das eine Verfahren für kleine und das andere für große Inputs implementiert. Aber natürlich weiß man das erst hinterher, wenn man die anderen Verfahren schon kennt\ldots
+\end{remark}
+
+\begin{remark}
+    Zusätzlich kommt hinzu, dass keine der Konstanten 100,2,3 in den Funktionen zuverlässig vorhergesagt werden kann. Wie viele Sekunden ein konkretes Programm für einen bestimmten Input tatsächlich benötigt, hängt von einer Vielzahl von Faktoren ab, die völlig unabhängig vom verwendeten Algorithmus sind:
+    \begin{enumerate}
+        \item Auf welchem Rechner wird der Algorithmus ausgeführt? Hat er einen \SI{2}{\giga\hertz} oder \SI{4}{\giga\hertz} Prozessor? Wie groß sind die L1, L2, L3-Caches? Ist es ein Laptop? Ist er gerade im Batteriemodus? Scheint gerade die Sonne auf den Bildschirm?
+        \item In welcher Programmiersprache ist das Programm geschrieben worden und wie wurde es kompiliert? C ? C++? Java? C++11 oder C++23 ? Welcher Compiler auf welcher Optimierungsstufe wurde verwendet? Java 17, 21 oder 24 ? Ist eine frische JVM oder eine aufgewärmte verwendet worden?
+        \item Welche anderen Prozesse liefen gerade auf dem Rechner?
+        \item \ldots
+    \end{enumerate}
+    Und selbst wenn wir in der Lage wären, einige dieser Faktoren gut genug zu verstehen, um eine belastbare Vorhersage der Laufzeit zu machen, würde solch eine Vorhersage nicht lange halten. Im Herbst dieses Jahres\footnote{Das wäre das Jahr 2025 für alle, die dies in der Zukunft lesen. Seid gegrüßt Zeitreisende!} wird Java 25 veröffentlicht werden; möglicherweise ist unser Algorithmus auf der neuen JVM ein bisschen schneller. Unsere Analyse zum jetzigen Zeitpunkt wird jedenfalls nicht berücksichtigen können, was in den nächsten Monaten an Mikro-Optimierungen implementiert werden wird.
+\end{remark}
+
+\begin{remark}
+    Auf der anderen Seite ist die exakte Anzahl an Millisekunden vermutlich gar nicht so relevant und uns interessiert viel mehr, ob wir überhaupt warten müssen, ob es sich lohnt einen frischen Kaffee zu holen (oder eine Tafel Schokolade zu essen), ob wir das Ergebnis überhaupt in diesem Leben noch erfahren werden. Dafür ist der genaue Wert dieser Konstanten vermutlich nicht relevant.
+
+    \medskip
+    Wir wollen also eine eher grobe Analyse durchführen, die von möglichst vielen hässlichen Faktoren der Realität unabhängig ist.
+
+    Wir wollen insbesondere keine exakten Zeiten messen. Typischerweise werden wir etwa die Laufzeit unserer Algorithmen nicht in Sekunden, sondern der Anzahl von \enquote{elementaren Operationen} zählen. Was genau \enquote{elementar} ist, hängt vom Kontext ab.
+
+    \smallskip
+    Klassisches Thema einer \enquote{Theoretische Informatik I}-Vorlesung wären z.B.\ die verschiedenen Sortieralgorithmen, für die man üblicherweise zählt, wie oft man zwei Elemente der zu sortierenden Liste miteinander vergleichen und ggf. ihre Positionen vertauschen muss, bis man die Liste sortiert hat.
+
+    \smallskip
+    Wir werden davon ausgehen, dass wir mit 1- und 2-stelligen Zahlen bereits addieren und multiplizieren können, mit 1.000.000-stelligen Zahlen aber nicht. Wir zählen also die Operationen mit kleinen Zahlen, die wir benötigen, um mit großen Zahlen zu rechnen.
+
+    \smallskip
+    Ein anderer Algorithmus, der ein anderes Ziel hat und sich nicht für die Details der Multiplikation interessiert, wird vielleicht die Multiplikation beliebiger Zahlen als eine Operation zählen.
+\end{remark}
+
+\begin{remark}
+    Weil wir insbesondere am Multiplikationsproblem \emph{sehr großer} Zahlen interessiert sind, werden wir außerdem in vielen Fällen vernachlässigen, wenn ein Algorithmus für kleine Inputs suboptimal ist. Wie bereits angemerkt, kann man das beheben, indem man verschiedene Algorithmen miteinander geschickt kombiniert. Für die theoretische Analyse soll uns aber vor allem das Verhalten für $n\to\infty$ interessieren.\footnote{Man beachte, dass wir damit wirklich die Grenzen der Realität verlassen. Das beobachtbare Universum ist verdammt groß, aber trotzdem endlich. Es gibt eine Größe von Inputs, die einfach nicht ins Universum passt. Spätestens ab dieser Größe ist es für alle Zwecke der realen Welt sinnlos, sich noch über die Laufzeit von Algorithmen zu unterhalten. Wir werden es trotzdem tun, einfach weil's Spaß macht!}
+\end{remark}
+
+\begin{definition}[Landau-$O$-Notation]
+    Es sei $f:\IN\to\IR_{\geq 0}$ eine Funktion. Die Menge $O(f)$ definieren wir als
+    \[O(f) := \Set{g:\IN\to\IR_{\geq 0} | \exists c,n_0>0 \forall n\geq n_0: f(n) \leq c g(n)}\]
+    Wir schreiben der Kürze halber $O(f(n))$, wenn wir $O(f)$ meinen, also z.B.\ $O(n^2)$ anstatt $O(n\mapsto n^2)$.
+\end{definition}
+
+\begin{remark}
+    $g\in O(f)$ bedeutet anschaulich, dass $g(n)$ höchstens so schnell wächst wie $f(n)$ für sehr große Inputs.
+
+    $f(n)=n^2$ hat z.B.\ die Eigenschaft, dass sich $f(n)$ vervierfacht, wenn $n$ sich verdoppelt. $g\in O(n^2)$ bedeutet somit, dass $g(2n)$ nicht viel mehr als viermal größer als $g(n)$ ist, zumindest wenn $n$ hinreichend groß ist.
+\end{remark}
+\begin{remark}
+    In dem meisten Fällen kann man die Definition auch umformulieren in
+    \[g\in O(f) \iff \limsup_{n\to\infty} \frac{g(n)}{f(n)} < \infty\]
+    da man meistens nicht $f(n)=0$ für unendlich viele $n$ hat. Man betrachtet i.d.R.\ monoton wachsende Funktionen $f$ mit $\lim_{n\to\infty} f(n) = \infty$ für die Analyse.
+\end{remark}
+\begin{remark}
+    Man beachte aber, dass dies keine Aussage über die exakten Werte von $g(n)$ macht. $0,0000001 n^2$ ist genauso in $O(n^2)$ wie $1.000.000n^2 + 10^{10^{10^{42}}}$. Wenn ein Algorithmus einfach genug aufgebaut ist, kann man manchmal auch exakte Werte ermitteln, aber es ist typischerweise einfacher, nur auf die $O$-Komplexität zu schauen, weil man dann solche Unterschiede ignorieren kann.
+
+    Es kommt auch häufig vor, dass man den Term, der die Komplexität bestimmt, gut versteht, aber kleinere Terme ignorieren will. Dann würde man z.B.\ herausfinden, dass die betrachtete Funktion die Form $3n^2+O(n)$ hat o.Ä.; der führende Term $3n^2$ bestimmt die Komplexität -- es ist $O(n^2)$ --, aber die echten Werte sind nicht exakt $3n^2$, die Differenz liegt aber in der kleineren Klasse $O(n)$.
+\end{remark}
+\begin{remark}
+    Man beachte auch, dass die $O$-Notation nur eine Abschätzung nach oben liefert. Wenn wir uns nicht clever anstellen, kann es also passieren, dass wir massiv überschätzen. Es ist z.B.\ völlig korrekt zu sagen, dass $f(n)=n^2+17$ in $O(n^{100})$ enthalten ist.
+
+    \medskip
+    Es gibt ähnlich gelagerte Definitionen wie $o(f)$ und $\Theta(f)$, die für untere bzw. genaue Abschätzung gemacht sind.
+
+    \medskip
+    Je komplexer ein Algorithmus ist, desto schwieriger ist es, genau zu erkennen, dass man die bestmögliche Abschätzung gefunden hat und in der Tat gibt es Algorithmen, für die die präzise Komplexität nicht bekannt ist.
+
+    \medskip
+    Noch schlimmer wird es, wenn man nicht die Komplexität eines einzelnen Algorithmus betrachtet, sondern einfach nur ein bestimmtes zu lösendes Problem vorgibt und sich \emph{alle} Algorithmen anschaut, die dieses Problem lösen könnten. Wenn man einen einzelnen Algorithmus findet, bekommt man eine Abschätzung nach oben, aber um die genaue Komplexität des Problems zu kennen, muss man \emph{alle} Algorithmen betrachten und beweisen, dass keiner von ihnen in eine strikt bessere Laufzeitklasse fällt. Damit sind nicht alle \emph{bekannten} Algorithmen gemeint, sondern alle nur denkbaren!
+
+    \medskip
+    Selbst für viele elementare Probleme ist die optimale Laufzeit nicht bekannt! Für Ganzzahl-Multiplikation \emph{vermutet} man, dass die Komplexität $\Theta(n\log(n))$ ist, aber wir können uns nicht sicher sein. Immerhin wissen wir sei 2019, dass es tatsächlich einen Algorithmus in $O(n\log(n))$ gibt, die obere Grenze also schon einmal stimmt.
+
+    Für Matrix-Multiplikation vermutet man $n^{2+o(1)}$, aber man kennt nicht einmal einen Algorithmus, der dem nahe käme. Der beste bekannte Algorithmus ist in $O(n^{2,371552})$, aber man weiß nicht, wie viel dichter an 2 man kommen kann.
+\end{remark}
+
+
+\begin{example}
+    \begin{enumerate}
+        \item Es ist immer $f\in O(f)$.
+        \item $O(1)$ ist die Menge aller beschränkten Funktionen, also der Funktionen $f$, für ein $c$ existiert mit $f(n)\leq c$ für alle $n\in\IN$.
+        \item $O(1) \subsetneq O(n^2) \subsetneq O(n^3) \subsetneq O(n^4) \subsetneq \ldots$
+        \item Für Polynome ist nur der Grad entscheidend: Ist $f(n) = a_k n^k+a_{k-1} n^{k-1} + \ldots $, dann $f\in O(n^k)$.
+        \item Allgemeiner: $O$-Notation ignoriert \enquote{Terme kleinerer Ordnung}, d.h.\ wenn $g\in O(f)$ ist, dann ist $f+g$ immer noch in $O(f)$.
+    \end{enumerate}
+\end{example}
+
+\begin{remark}
+    Wir verwenden die $O$-Notation nicht nur für die Funktionen, die die Laufzeit von Algorithmen messen, sondern beispielsweise auch für Funktionen, die den Speicherbedarf messen.
+
+    Wir würden also z.B.\ sagen, dass ein Algorithmus bei einem Input der Größe $n$ eine \enquote{Laufzeit von $O(n^6)$ und Speicherbedarf von $O(n^3 \log(n)^2)$ hat}. Damit meinen wir, dass die Funktion, die die Laufzeit in Abhängigkeit von $n$ misst, in $O(n^6)$ enthalten ist, und die Funktion, die den Speicherbedarf in Abhängigkeit von $n$ misst, in $O(n^3\log(n)^2)$.
+\end{remark}

@@ -1,0 +1,56 @@
+\begin{sheet}
+
+    \begin{problem}[title={Gruppen}]
+        Beweise alle Behauptungen in Abschnitt \label{groups}
+    \end{problem}
+
+    \begin{problem}[title={Ringe}]
+        Beweise alle Behauptungen in Abschnitt \label{rings}
+    \end{problem}
+
+    \begin{problem}[title={Quotienten von Polynomringen I}]
+        Es sei $R$ ein kommutativer Ring. Betrachte den Polynomring $R[X]$ in einer Unbekannten und ein normiertes Polynom $p(X) = X^n + p_{n-1} X^{n-1} + \ldots + p_1 x+p_0 \in R[X]$ vom Grad $n$. Betrachte das von $p$ erzeugte \udot{Hauptideal} $(p):=pR[X]:=\Set{q\cdot p | q\in R[X]}$.
+
+
+        \begin{subproblem}
+            Jede Restklasse von $R[X]/(p)$ enthält genau ein Polynom vom Grad $\leq n-1$.
+
+            Dieses kann auch effizient berechnet werden: Ist ein beliebiges Polynom
+            \[f = f_0 + f_1 X + f_2 X ^2 + \ldots f_m X^m\]
+            gegeben, so kann das Polynom $\tilde{f}$ vom Grad $<n$ mit $\tilde{f} \equiv f\mod p$ in $O(nm)$ ausgerechnet werden.
+        \end{subproblem}
+
+        \begin{subproblem}
+            Etwas abstrakter: Die additive Gruppe von $R[X]/(p)$ ist via
+            \[(a_0,a_1,\ldots,a_{n-1}) \mapsto [a_0+a_1 X+\ldots +a_{n-1}X^{n-1}]\]
+            zu $R^n$ isomorph.
+        \end{subproblem}
+
+        \begin{subproblem}
+            Wenn $n=1$, also $p(X) = X-p_0$ ist, dann ist das in der Tat ein Isomorphismus von Ringen. Die Umkehrabbildung ist die Auswertungsabbildung $R[X]/(X-p_0) \to R, [f] \mapsto f(p_0)$.
+        \end{subproblem}
+    \end{problem}
+
+    \begin{problem}[title={Ideale vs. Teilbarkeit}]
+        Historisch sind Ideale als \enquote{ideale Zahlen} eingeführt worden, um bestimmte Eigenschaften der Teilbarkeitsrelation besser zu verstehen. Dies beruht auf folgenden zu zeigenden Eigenschaften.
+
+        Es sei $R$ ein kommutativer Ring, $p,q\in R$ zwei beliebige Elemente. Zeige:
+        \begin{subproblem}
+            $(p) \subseteq (q) \iff q | p$
+        \end{subproblem}
+
+        \begin{subproblem}
+            Gibt es ein $r\in R$ mit $(p) + (q) = (r)$, dann ist $r$ ein größter gemeinsamer Teiler von $p$ und $q$.
+        \end{subproblem}
+        \begin{subproblem}
+            Gibt es ein $r\in R$ mit $(p) \cap (q) = (r)$, dann ist $r$ ein kleinstes gemeinsames Vielfaches von $p$ und $q$.
+        \end{subproblem}
+    \end{problem}
+
+    \begin{problem}
+        Zeige: $\IZ$ ist ein \udot{Hauptidealring}, d.h.\ jedes Ideal $I\unlhd\IZ$ ist von der Form $I=(k)$ für ein $k\in\IZ$.
+    \end{problem}
+    \begin{problem}
+        Es sei $\IK$ ein Körper. Zeige, dass $\IK[X]$ auch ein Hauptidealring ist.
+    \end{problem}
+\end{sheet}
