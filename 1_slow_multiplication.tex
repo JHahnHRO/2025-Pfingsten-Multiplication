@@ -1,7 +1,7 @@
 % !TeX root = main.tex
 % !TeX spellcheck = de_DE
 
-\subsection{Das Problem}
+\subsection{Das Problem}\label{problem-description}
 
 \begin{remark}
     Konkret ist unser Problem folgendes:
@@ -38,11 +38,18 @@
 \end{remark}
 
 \begin{remark}
-    Es ist jedoch nicht unbedingt klar, dass die beiden Schaltkreise für Addition und Multiplikation gleich schnell operieren. In der Tat war auf echter Hardware lange ein deutlicher Unterschied zwischen den Laufzeiten einer Additions- und einer Multiplikationsinstruktion vorhanden. Teilweise war Multiplikation eine Größenordnung langsamer als Addition. Aus diesem Grund hat es sich auch in der theoretischen Analyse eingebürgert, nicht alle Operationen eines Multiplikationsalgorithmus zu zählen, sondern nur die Multiplikationen, weil diese mehr ins Gewicht fallen.
-    
+    Gewisse Operationen zählen wir nicht zur Laufzeit des Algorithmus:
+
     \smallskip
-    Wir werden dieser Tradition auch folgen, aber trotzdem Buchführen, wie viele Additionen ein Algorithmus jeweils benötigt, wenn auch im Zweifelsfall etwas weniger genau. Insbesondere werden wir keine Additionen zählen, die Schleifenvariablen inkrementieren. Die sind Teil des Konstrukts \enquote{Schleife}, nicht unseres spezifischen Algorithmus. (Und wie die Schleifen tatsächlich ausgeführt werden, ist außerdem zu schwer vorhersagbar, um konkrete Anzahlen an Additionen vorhersagen zu können)
+    Wir werden keine Additionen zählen, die Schleifenvariablen inkrementieren. Die sind Teil des Konstrukts \enquote{Schleife}, nicht unseres spezifischen Algorithmus. Und wie die Schleifen tatsächlich ausgeführt werden, ist außerdem zu schwer vorhersagbar, um konkrete Anzahlen an Additionen vorhersagen zu können (Stichwort \enquote{loop-tiling}, \enquote{loop-unrolling}, \enquote{auto-vectorization}, \enquote{SIMD}, \ldots)
+
+    \medskip
+    Wir werden uns außerdem keine Gedanken um Speicherzugriffe machen. Speicher ist in unserer Analyse kostenlos.
+
+    Auch hier ist die Realität wieder sehr anders; die echte Laufzeit echten Codes auf echter Hardware ist sehr wohl davon abhängig, wie häufig im Hauptspeicher gelesen oder geschrieben wird, ob Caches effizient genutzt werden können etc. Es gibt auch Theorie für diese Aspekte (Stichwort \enquote{cache-friendliness}, \enquote{cache-oblivious algorithms} etc.), aber wir werden das in diesem Kurs nicht untersuchen.
 \end{remark}
+
+\subsection{Der erste Algorithmus}\label{slow_multiplication:first_algorithm}
 
 \begin{remark}
     Der offensichtliche Algorithmus für Multiplikation beliebiger natürlicher Zahlen ergibt sich direkt durch Anwendung des Distributivgesetzes:
@@ -56,13 +63,13 @@
     In jeder Zeile werden dafür die Produkte $a_i\cdot b_j$ ausgerechnet. Grob vereinfacht würde das also so aussehen:
 
     \[\begin{array}{c c c c c c c c}
-        a_2 & a_1 & a_0     & \cdot   & b_3     & b_2     & b_1     & b_0     \\
-        \hline
-        &     &         &         & a_0 b_3 & a_0 b_2 & a_0 b_1 & a_0 b_0 \\
-        &     &         & a_1 b_3 & a_1 b_2 & a_1 b_1 & a_1 b_0 & 0       \\
-        &     & a_2 b_3 & a_2 b_2 & a_2 b_1 & a_2 b_0 & 0       & 0       \\
-        \hline
-        & c_6 & c_5     & c_4     & c_3     & c_2     & c_1     & c_0
+          a_2 & a_1 & a_0     & \cdot   & b_3     & b_2     & b_1     & b_0     \\
+          \hline
+          &     &         &         & a_0 b_3 & a_0 b_2 & a_0 b_1 & a_0 b_0 \\
+          &     &         & a_1 b_3 & a_1 b_2 & a_1 b_1 & a_1 b_0 & 0       \\
+          &     & a_2 b_3 & a_2 b_2 & a_2 b_1 & a_2 b_0 & 0       & 0       \\
+          \hline
+          & c_6 & c_5     & c_4     & c_3     & c_2     & c_1     & c_0
     \end{array}\]
 
     Natürlich sind die Produkte $a_i\cdot b_j$ der einzelnen Ziffern i.A.\ größer als eine Ziffer, sodass man in jeder Zeile und von einer Zeile zur nächsten jeweils die Überträge beachten muss.
@@ -74,19 +81,19 @@
 
     %! suppress = MissingLabel
     \begin{lstlisting}
-    Array<Digit> multiply(Array<Digit> a, Array<Digit> b){
+    List<Digit> multiply(List<Digit> a, List<Digit> b){
       // initialize with a.length + b.length zeros
-      Array<Digit> c := {0,0,...,0};
+      List<Digit> c := new List<Digit>(a.length+b.length);
 
-      for(i := 0; i<a.length; i++){
+      for(i := 0; i < a.length; i++){
         Digit z := 0;
 
-        for(j := 0; j<b.length; j++){
+        for(j := 0; j < b.length; j++){
           // p := c[i+j] + a_i * b_j + z is at most a 2-digit number !!
           Digits {p_1,p_0} := c[i+j] + a[i] * b[j] + z;
 
-          c[i+j]    := p_0;
-          z         := p_1;
+          c[i+j] := p_0;
+          z      := p_1;
         }
         c[i + b.length] := z;
       }
@@ -113,17 +120,17 @@
 
 \begin{remark}
     Wie wir eben gezeigt haben, ist es möglich, einen Schaltkreis zu bauen, der vier Wörter $a,b,c,z$ als Input nimmt, und in einer einzigen Operation das 2-Wort breite Ergebnis $ab+c+z$ berechnet.
-    
+
     \smallskip
     Es ist von der konkreten Prozessorarchitektur abhängig, ob es tatsächlich eine solche Instruktion gibt. Wenn es sie gibt, sind überhaupt keine Additionsinstruktionen zusätzlich zu den Multiplikationen für unseren Algorithmus nötig.
-    
+
     \smallskip
     Wenn es diesen Schaltkreis nicht gibt, dann gibt es oft trotzdem $(a,b,c)\mapsto ab+c$, womit wir nur noch eine einzige Addition zusätzlich zur Multiplikation benötigen.
 \end{remark}
 
 \begin{remark}
     Der Algorithmus ist offenbar nicht davon abhängig, dass $A$ und $B$ die gleiche Anzahl an Ziffern haben. Etwas präziser könnten wir die Laufzeiten also als $O(nm)$ ausdrücken, wobei $n$ und $m$ die Längen der beiden Zahlen sind.
-    
+
     \smallskip
     Darin enthalten ist die Teilaussage, dass die Multiplikation mit einer kleinen Konstanten in $O(n)$ realisierbar ist. Das merken wir uns für später, weil wir es verwenden werden.
 \end{remark}
@@ -152,10 +159,10 @@
     Pseudocode:
     %! suppress = MissingLabel
     \begin{lstlisting}
-    Array<Digit> multiply(Array<Bit> a, Array<Digit> b){
+    List<Digit> multiply(List<Bit> a, List<Digit> b){
       // calculate the number of base-g-digits in A
       n := floor( a.length * log(2)/log(g) ) + 1;
-      c := new Array<Digit>[n + b.length];
+      c := new List<Digit>(n + b.length);
 
       // stores 2^i*b
       b2 := b;
@@ -171,16 +178,17 @@
     \end{lstlisting}
 \end{algorithm}
 
-\begin{proposition}[Korrektheit und Laufzeit]\label{alg:double-and-add:correctness}
+\begin{proposition}[Korrektheit und Laufzeit]
+    \label{alg:double-and-add:correctness}
     Der Algorithmus ist korrekt, hat Laufzeit $O(n^2)$ (alles Additionen) und Speicherbedarf $4n+O(1)$.
 \end{proposition}
 \begin{proof}
-Übung.
+    Übung.
 \end{proof}
 
 \begin{remark}
     Da man in der Praxis eben nicht mit beliebigen $g$, sondern mit Zweierpotenzen $g=2^k$ arbeitet, ist für die Berechnung von $\frac{\log(2)}{\log(g)}$ keine Fließkomma-Arithmetik nötig, da sich alles zu $\frac{1}{k}$ kürzt. Die Länge von $A$ in bits ist typischerweise klein genug, damit die Division \texttt{a.length / k} in einer einzigen Hardware-Instruktion berechnet werden kann.
 
     \smallskip
-    Mehr noch: Wenn $g$ selbst eine Zweierpotenz ist, dann besteht eigentlich kein Unterschied zwischen \texttt{Array<Bit>} und \texttt{Array<Digit>} und es ist überhaupt keine zusätzliche Aktion nötig.
+    Mehr noch: Wenn $g$ selbst eine Zweierpotenz ist, dann besteht eigentlich kein Unterschied zwischen \texttt{List<Bit>} und \texttt{List<Digit>} und es ist überhaupt keine zusätzliche Aktion nötig.
 \end{remark}
