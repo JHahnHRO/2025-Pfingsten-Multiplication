@@ -1,5 +1,9 @@
 % !TeX spellcheck = de_DE
 \documentclass[fontsize=11pt,fleqn,a4paper]{scrartcl}
+\usepackage{hypbmsec}
+\usepackage{hypbmsec}
+\usepackage{hypbmsec}
+\usepackage{hypbmsec}
 
 \author{Johannes Hahn}
 \title{Schnelle Multiplikation}
@@ -25,22 +29,22 @@
 \pagebreak
 
 
-\section{Level 0: $O(n^2)$ wie in der Grundschule}\label{slow_multiplication}
+\section{Level 0: \texorpdfstring{$O(n^2)$}{O(n²)} wie in der Grundschule}\label{slow_multiplication}
 \input{./1_slow_multiplication}
 \input{./1_exercises}
 
 
-\section{Level 1: $O(n^{1.585})$ Karatsuba}
+\section{Level 1: \texorpdfstring{$O(n^{1.585})$}{O(n\^{}1.585)} Karatsubas Trick}\label{karatsuba}
 \input{./2_karatsuba}
 \input{./2_exercises}
 
 
-\section{Level 2: $O(n^{1+\varepsilon})$ Toom-Cook}
+\section{Level 2: \texorpdfstring{$O(n^{1+\varepsilon})$}{O(n\^{}(1+ε))} Toom-Cook}\label{toom-cook}
 \input{./3_toom_cook}
 \input{./3_exercises}
 
 
-\section{Level 3: Multiplizieren mittels Fourier-Transformation, Schönhage-Strassen \& Co}
+\section{Level 3: Multiplizieren mittels Fourier-Transformation, Schönhage-Strassen \& Co}\label{fft_multiplication}
 \input{4_1_intro}
 \input{4_2_fourier}
 \input{4_3_schoenhage_strassen}
