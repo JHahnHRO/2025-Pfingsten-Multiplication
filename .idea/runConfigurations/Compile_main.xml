@@ -11,8 +11,8 @@
       <expand-macros-in-environment-variables>false</expand-macros-in-environment-variables>
       <before-run-command />
       <main-file>$PROJECT_DIR$/main.tex</main-file>
-      <output-path>$PROJECT_DIR$/out</output-path>
-      <auxil-path>$PROJECT_DIR$/auxil</auxil-path>
+      <output-path>$PROJECT_DIR$</output-path>
+      <auxil-path>$PROJECT_DIR$</auxil-path>
       <compile-twice>false</compile-twice>
       <output-format>PDF</output-format>
       <latex-distribution>MIKTEX</latex-distribution>
