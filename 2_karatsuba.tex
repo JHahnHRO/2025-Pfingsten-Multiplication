@@ -4,15 +4,15 @@
 \begin{remark}
     Über Jahrtausende ist keine Methode bekannt gewesen, wesentlich schneller als $O(n^2)$ zu multiplizieren. In der Tat wurde 1956 von Kolmogorov\footnote{Andrey Nikolaevich Kolmogorov, 1903--1987, russ. Mathematiker} vermutet, dass es tatsächlich nicht schneller geht. Jedoch wurde kurz danach von Karatsuba\footnote{Anatoly Karatsuba, 1937--2008, russ. Mathematiker} eine schnellere Methode entdeckt.\footnote{Das Resultat wurde 1960 veröffentlicht. Es wird die Anekdote erzählt, dass Karatsuba das Resultat bereits wenige Tage, nachdem Kolmogorov die Vermutung auf einer Konferenz äußerte, hatte und es noch auf der gleichen Konferenz Kolmogorov mitteilte.}
 
-\medskip
-Karatsubas Methode arbeitet rekursiv wie viele anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
+    \medskip
+    Karatsubas Methode arbeitet rekursiv wie viele anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
 
-\medskip
-Speziell für Karatsubas Methode wählt man $G$ groß genug, dass die beiden Inputs $A$ und $B$ nur noch aus zwei Ziffern bestehen. Für Zahlen mit zwei Ziffern $A=a_1G+a_0, B=b_1G+b_0$ gilt:
-\[AB = \underbrace{a_1 b_2}_{=c_2} G^2 + (\underbrace{a_1 b_0+a_0 b_1}_{=c_1})G+\underbrace{a_0 b_0}_{=c_0}\]
-In dieser Form aufgeschrieben, sehen wir genau die $2^2$ Multiplikationen, die der klassische Algorithmus benötigt. Karatsuba sah, dass der mittlere Term auch gleich
-\[c_1 = (a_1+a_0)(b_1+b_0)-a_1 b_1-a_0b_0 = (a_1+b_1)(b_1+b_0)-c_2-c_0\]
-ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition auch durch eine Multiplikation und zwei Subtraktionen berechnen. Additionen und Subtraktionen haben typischerweise annähernd die gleiche Laufzeit.
+    \medskip
+    Speziell für Karatsubas Methode wählt man $G$ groß genug, dass die beiden Inputs $A$ und $B$ nur noch aus zwei Ziffern bestehen. Für Zahlen mit zwei Ziffern $A=a_1G+a_0, B=b_1G+b_0$ gilt:
+    \[AB = \underbrace{a_1 b_2}_{=c_2} G^2 + (\underbrace{a_1 b_0+a_0 b_1}_{=c_1})G+\underbrace{a_0 b_0}_{=c_0}\]
+    In dieser Form aufgeschrieben, sehen wir genau die $2^2$ Multiplikationen, die der klassische Algorithmus benötigt. Karatsuba sah, dass der mittlere Term auch gleich
+    \[c_1 = (a_1+a_0)(b_1+b_0)-a_1 b_1-a_0b_0 = (a_1+b_1)(b_1+b_0)-c_2-c_0\]
+    ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition auch durch eine Multiplikation und zwei Subtraktionen berechnen. Additionen und Subtraktionen haben typischerweise annähernd die gleiche Laufzeit.
 \end{remark}
 
 \begin{algorithm}[Karatsubas Algorithmus]
@@ -37,49 +37,49 @@ ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition a
         middle := subtract(subtract(product, high), low);
         
         return add(low, (0,middle), (0,0,high));
-    }    
+    }
     \end{lstlisting}
 \end{algorithm}
 
 \begin{remark}
-In der Praxis wählt man den Cutoff nicht so klein wie möglich, um möglichst viel mit der \enquote{besseren} Karatsuba-Methode zu arbeiten, sondern ein kleines bisschen größer, da für sehr kleine Anzahlen von Ziffern die Schul-Methode in der Praxis doch schneller ist als die Karatsuba-Methode. Selbst wenn nur einer der beiden Faktoren wenig Ziffern hat, insbesondere wenn ein Faktor nur eine Ziffer hat, ist die Schul-Methode schneller.
+    In der Praxis wählt man den Cutoff nicht so klein wie möglich, um möglichst viel mit der \enquote{besseren} Karatsuba-Methode zu arbeiten, sondern ein kleines bisschen größer, da für sehr kleine Anzahlen von Ziffern die Schul-Methode in der Praxis doch schneller ist als die Karatsuba-Methode. Selbst wenn nur einer der beiden Faktoren wenig Ziffern hat, insbesondere wenn ein Faktor nur eine Ziffer hat, ist die Schul-Methode schneller.
 
-\smallskip
-Die Standard-Library von Java nutzt beispielsweise $g=2^{32}$ als Basis, d.h. 32-bit Integer werden direkt per Hardware-Instruktion multipliziert, und $n=80$ als Cutoff\footnote{Diese Zahlen sind Implementierungsdetails, die sich von einer Java-Version zur nächsten auch mal ändern können. Ich habe sie im OpenJDK 21 geprüft. Wer selbst nachschauen will: Es geht um die Klasse \texttt{java.math.BigInteger} und ihre Methode \texttt{multiply(BigInteger)}.}: Sobald einer der Faktoren weniger als $80$ Worte groß ist, wird mit der Schul-Methode multipliziert.
+    \smallskip
+    Die Standard-Library von Java nutzt beispielsweise $g=2^{32}$ als Basis, d.h. 32-bit Integer werden direkt per Hardware-Instruktion multipliziert, und $n=80$ als Cutoff\footnote{Diese Zahlen sind Implementierungsdetails, die sich von einer Java-Version zur nächsten auch mal ändern können. Ich habe sie im OpenJDK 21 geprüft. Wer selbst nachschauen will: Es geht um die Klasse \texttt{java.math.BigInteger} und ihre Methode \texttt{multiply(BigInteger)}.}: Sobald einer der Faktoren weniger als $80$ Worte groß ist, wird mit der Schul-Methode multipliziert.
 
-Die C-Bibliothek GMP (GNU Multiprecision Arithmetic library) definiert den Cutoff hardware-abhängig zwischen $n=10$ und $34$ Wörtern, z.B. $n=26$ für ARM64 Apple's M1 Prozessor.
+    Die C-Bibliothek GMP (GNU Multiprecision Arithmetic library) definiert den Cutoff hardware-abhängig zwischen $n=10$ und $34$ Wörtern, z.B. $n=26$ für ARM64 Apple's M1 Prozessor.
 \end{remark}
 
 \begin{remark}
-Man beachte, dass $(a_1+a_0)(b_1+b_0)$ nicht ein Produkt von zwei Zahlen $<G$, sondern $<2G$ ist. Wir sind also ganz leicht über die Grenze gegangen, bis zu der wir gehen wollten. Man kann auch nicht einfach $G$ etwas größer zu wählen, sodass die führenden Ziffern $a_1$ und $b_1$ kleiner werden, z.B. wird das mit $A=199999$ nicht funktionieren: Egal, welche (sinnvolle) Potenz $G=10^k$ wir wählen, die Ziffer $a_0$ wird immer $9..99$ sein und somit bei Addition zum Overflow führen.
+    Man beachte, dass $(a_1+a_0)(b_1+b_0)$ nicht ein Produkt von zwei Zahlen $<G$, sondern $<2G$ ist. Wir sind also ganz leicht über die Grenze gegangen, bis zu der wir gehen wollten. Man kann auch nicht einfach $G$ etwas größer zu wählen, sodass die führenden Ziffern $a_1$ und $b_1$ kleiner werden, z.B. wird das mit $A=199999$ nicht funktionieren: Egal, welche (sinnvolle) Potenz $G=10^k$ wir wählen, die Ziffer $a_0$ wird immer $9..99$ sein und somit bei Addition zum Overflow führen.
 
-\smallskip
-Da man i.d.R. nicht mit $g=2$ arbeitet (sondern eher $g=2^{32}$), benötigt man für die Summen $a_1+a_0$ und $b_1+b_0$ selbst im Extremfall nur eine weitere Ziffer. Man verliert also in der Praxis nicht wirklich viel. Insbesondere dann, wenn man die Karatsuba-Methode sowieso nur für die größeren Produkte einsetzt; ob man von 1000 zu 500 oder 501 Ziffern reduziert, ist nicht so furchtbar relevant.
+    \smallskip
+    Da man i.d.R. nicht mit $g=2$ arbeitet (sondern eher $g=2^{32}$), benötigt man für die Summen $a_1+a_0$ und $b_1+b_0$ selbst im Extremfall nur eine weitere Ziffer. Man verliert also in der Praxis nicht wirklich viel. Insbesondere dann, wenn man die Karatsuba-Methode sowieso nur für die größeren Produkte einsetzt; ob man von 1000 zu 500 oder 501 Ziffern reduziert, ist nicht so furchtbar relevant.
 
-\medskip
-Wenn man es unbedingt möchte, ist es aber möglich, stattdessen
-\[c_1=-(a_1-a_0)(b_1-b_0)+a_1 b_1+a_0 b_0\]
-zu verwenden, denn da $0\leq a_0,a_1<G$ gilt, wird auch stets $\abs{a_1-a_0}<G$ sein. Man zahlt dafür den Preis, ein bisschen mehr Buchhaltung mit den Vorzeichen betreiben zu müssen.
+    \medskip
+    Wenn man es unbedingt möchte, ist es aber möglich, stattdessen
+    \[c_1=-(a_1-a_0)(b_1-b_0)+a_1 b_1+a_0 b_0\]
+    zu verwenden, denn da $0\leq a_0,a_1<G$ gilt, wird auch stets $\abs{a_1-a_0}<G$ sein. Man zahlt dafür den Preis, ein bisschen mehr Buchhaltung mit den Vorzeichen betreiben zu müssen.
 \end{remark}
 
-\begin{proposition}
+\begin{proposition}[Karatsuba \cite{karatsuba}]
     Algorithmus~\ref{alg:karatsuba} ist korrekt, benötigt $O(n^{\log(3) / \log(2)})$ Multiplikationen, Additionen und Subtraktionen, sowie $O(n)$ Speicher.
 \end{proposition}
 \begin{proof}
-Die Abschätzungen ergeben sich direkt aus dem Mastertheorem (siehe Aufgabe \ref{ex:mastertheorem}), denn die Anzahl der Multiplikationen erfüllt die Rekursion $M(n) = 3 M(\frac{n}{2})$, die Anzahl der Additionen/Subtraktionen $A(n) = 3 A(\frac{n}{2})+2\frac{n}{2} + 3\cdot 2n$.
+    Die Abschätzungen ergeben sich direkt aus dem Mastertheorem (siehe Aufgabe \ref{ex:mastertheorem}), denn die Anzahl der Multiplikationen erfüllt die Rekursion $M(n) = 3 M(\frac{n}{2})$, die Anzahl der Additionen/Subtraktionen $A(n) = 3 A(\frac{n}{2})+2\frac{n}{2} + 3\cdot 2n$.
 
-\medskip
-Der Speicherbedarf ergibt sich daraus, dass wir für jede Stufe der Rekursion Speicher für \texttt{high}, \texttt{low}, \texttt{mixed\_a}, \texttt{mixed\_b}, \texttt{product},  \texttt{middle} sowie das Endergebnis benötigen, die jeweils $n$, $n$, $\frac{n}{2}+1$, $\frac{n}{2}+1$, $n+1$, $n$, $2n$ groß sind. Wir runden das zu $7n+O(1)$.\footnote{In der Tat kann man clever sein: Für \texttt{high}, \texttt{low} und \texttt{middle} benötigt man keinen zusätzlichen Speicher, wenn man \texttt{high}, \text{low} direkt im Ergebnis speichert und die Subtraktionen bzw. Addition jeweils in-place ausführt. Dann ist der konstante Faktor 5 statt 7.}
+    \medskip
+    Der Speicherbedarf ergibt sich daraus, dass wir für jede Stufe der Rekursion Speicher für \texttt{high}, \texttt{low}, \texttt{mixed\_a}, \texttt{mixed\_b}, \texttt{product},  \texttt{middle} sowie das Endergebnis benötigen, die jeweils $n$, $n$, $\frac{n}{2}+1$, $\frac{n}{2}+1$, $n+1$, $n$, $2n$ groß sind. Wir runden das zu $7n+O(1)$.\footnote{In der Tat kann man clever sein: Für \texttt{high}, \texttt{low} und \texttt{middle} benötigt man keinen zusätzlichen Speicher, wenn man \texttt{high}, \text{low} direkt im Ergebnis speichert und die Subtraktionen bzw. Addition jeweils in-place ausführt. Dann ist der konstante Faktor 5 statt 7.}
 
-\smallskip
-Wenn wir sequentiell ausführen, also jeweils nur einen Zweig im Rekursionsbaum gleichzeitig im Speicher halten müssen, haben also demnach einen Speicherbedarf von 
-\[\left(7n + O(1)\right) + \left(7\frac{n}{2} + O(1)\right) + \left(7 \frac{n}{4} + O(1)\right) + \ldots = 2\cdot 7n+O(\log(n)) \qedhere\]
+    \smallskip
+    Wenn wir sequentiell ausführen, also jeweils nur einen Zweig im Rekursionsbaum gleichzeitig im Speicher halten müssen, haben also demnach einen Speicherbedarf von
+    \[\left(7n + O(1)\right) + \left(7\frac{n}{2} + O(1)\right) + \left(7 \frac{n}{4} + O(1)\right) + \ldots = 2\cdot 7n+O(\log(n)) \qedhere\]
 \end{proof}
 
 \begin{remark}
-Solange wir nur endlich viele Prozessoren haben und nicht maximal parallel arbeiten, benötigen wir auch nur ein konstantes Vielfaches der sequentiellen Speichermenge.
+    Solange wir nur endlich viele Prozessoren haben und nicht maximal parallel arbeiten, benötigen wir auch nur ein konstantes Vielfaches der sequentiellen Speichermenge.
 
-Wenn wir maximal parallelisieren und somit alle Zweige der Rekursion gleichzeitig im Speicher halten müssen, dann erfüllt der Speicherbedarf auch eine Rekursion wie $S(n) = 3S(\frac{n}{2})+5n$, womit sich dann ein Speicherbedarf von $O(n^{\log(3)/\log(2)})$ ergibt.
+    Wenn wir maximal parallelisieren und somit alle Zweige der Rekursion gleichzeitig im Speicher halten müssen, dann erfüllt der Speicherbedarf auch eine Rekursion wie $S(n) = 3S(\frac{n}{2})+5n$, womit sich dann ein Speicherbedarf von $O(n^{\log(3)/\log(2)})$ ergibt.
 
-In der Praxis hat keine Maschine unendlich viele Prozessoren, sodass man niemals voll parallelisieren kann. Andererseits stoßen wir in der Praxis auch nicht auf Zahlen mit beliebig vielen Ziffern, sondern ausschließlich $\leq 2^{32}$ Ziffern (wenn die Zifferngröße $g=2^{32}$ ist, dann wäre eine einzige solche Zahl schon $\approx \SI{4}{\giga\byte}$ groß!), sodass die Rekursionstiefe $\log(n)$ als praktisch konstant und $\leq 32$ betrachtet werden kann und somit auch in der Nähe einer realistischen Anzahl an Prozessoren liegt.
+    In der Praxis hat keine Maschine unendlich viele Prozessoren, sodass man niemals voll parallelisieren kann. Andererseits stoßen wir in der Praxis auch nicht auf Zahlen mit beliebig vielen Ziffern, sondern ausschließlich $\leq 2^{32}$ Ziffern (wenn die Zifferngröße $g=2^{32}$ ist, dann wäre eine einzige solche Zahl schon $\approx \SI{4}{\giga\byte}$ groß!), sodass die Rekursionstiefe $\log(n)$ als praktisch konstant und $\leq 32$ betrachtet werden kann und somit auch in der Nähe einer realistischen Anzahl an Prozessoren liegt.
 \end{remark}

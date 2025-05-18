@@ -31,7 +31,7 @@
     Schönhage\footnote{Arnold Schönhage, dt. Mathematiker, geb. 1934} und Strassen\footnote{Volker Strassen, dt. Mathematiker, geb. 1936} haben genau solche eine Analyse durchgeführt und sind zu folgendem Ergebnis gekommen.
 \end{remark}
 
-\begin{theorem}[Schönhage-Strassen I]
+\begin{theorem}[Schönhage-Strassen I {\citep[286f]{schoenhage_strassen}}]
     Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)^{1+\varepsilon})$ elementaren arithmetischen Operationen auf Ziffern möglich. Präziser kann man für jedes $k\in\IN$ die Komplexität
     \[O(n\cdot \log(n) \cdot \log(\log(n)) \cdots (\log^k(n))^2)\]
     erreichen.
@@ -44,7 +44,7 @@
         \item ein multiplikatives Inverses von $n$ enthält.
     \end{enumerate}
 
-    Wenn wir eine Zweierpotenz $n=2^\ell$ verwenden wollen, ist das z.B.\ vom Restklassenring $\IZ/(2^{2^\ell}+1)$ erfüllt, denn $\zeta:=2$ erfüllt per Konstruktion $\zeta^{2^\ell} = -1$ und ist somit eine $2^{2\ell}$-te primitive Einheitswurzel. Die Restklassen repräsentiert man natürlicherweise durch ganze Zahlen zwischen $0$ und $2^{2^\ell}$, sodass man keine komplexe Arithmetik benötigt, sondern nur ganzzahlige Arithmetik\footnote{Man beachte, dass wegen $2^{2^\ell} \equiv -1$ die notwendigen Divisionen-mit-Rest durch Additionen, Subtraktionen und Bitshifts realisiert werden können}.
+    Wenn wir eine Zweierpotenz $n=2^\ell$ verwenden wollen, ist das z.B.\ vom Restklassenring $\IZ/(2^{2^\ell}+1)$ erfüllt, denn $\zeta:=2$ erfüllt per Konstruktion $\zeta^{2^\ell} = -1, \zeta^{2^\ell \cdot 2}=1$ und ist somit eine $2^{\ell+1}$-te primitive Einheitswurzel. Die Restklassen repräsentiert man natürlicherweise durch ganze Zahlen zwischen $0$ und $2^{2^\ell}$, sodass man keine komplexe Arithmetik benötigt, sondern nur ganzzahlige Arithmetik\footnote{Man beachte, dass wegen $2^{2^\ell} \equiv -1$ die notwendigen Divisionen-mit-Rest durch Additionen, Subtraktionen und Bitshifts realisiert werden können}.
 
     \smallskip
     Natürlich ist $2^{2^\ell}=2^n$ wieder in der Größenordnung, in der unsere Inputs $A$ und $B$ waren, denn die hatten ja $n$ Ziffern. Wenn wir $g=2^{32}$ verwenden, dann hat $2^n$ zwar trotzdem weniger Bits als $g^n$, aber nur um einen konstanten Faktor weniger, sodass wir diesen Ansatz rekursiv anwenden müssen, wenn wir Arithmetik in $\IZ/(2^{2^\ell}+1)$ verwenden wollen.
@@ -55,7 +55,7 @@
     All diese Überlegungen haben Schönhage und Strassen auch durchgeführt und haben so ihr vorheriges Ergebnis wie folgt verbessert:
 \end{remark}
 
-\begin{theorem}[Schönhage-Strassen II]
+\begin{theorem}[Schönhage-Strassen II {\citep[287ff]{schoenhage_strassen}}]
     Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)\cdot\log(\log(n)))$ elementaren arithmetischen Operationen auf Ziffern möglich.
 \end{theorem}
 
