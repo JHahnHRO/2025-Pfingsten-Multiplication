@@ -2,7 +2,7 @@
 % !TeX spellcheck = de_DE
 
 \begin{remark}
-Über Jahrtausende ist keine Methode bekannt gewesen, wesentlich schneller als $O(n^2)$ zu multiplizieren. Erst 1960 wurde von Anatoly Karatsuba\footnote{russ. Mathematiker, 1937--2008} eine schnellere Methode entdeckt.
+    Über Jahrtausende ist keine Methode bekannt gewesen, wesentlich schneller als $O(n^2)$ zu multiplizieren. In der Tat wurde 1956 von Kolmogorov\footnote{Andrey Nikolaevich Kolmogorov, 1903--1987, russ. Mathematiker} vermutet, dass es tatsächlich nicht schneller geht. Jedoch wurde kurz danach von Karatsuba\footnote{Anatoly Karatsuba, 1937--2008, russ. Mathematiker} eine schnellere Methode entdeckt.\footnote{Das Resultat wurde 1960 veröffentlicht. Es wird die Anekdote erzählt, dass Karatsuba das Resultat bereits wenige Tage, nachdem Kolmogorov die Vermutung auf einer Konferenz äußerte, hatte und es noch auf der gleichen Konferenz Kolmogorov mitteilte.}
 
 \medskip
 Karatsubas Methode arbeitet rekursiv wie viele anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
@@ -15,7 +15,8 @@ In dieser Form aufgeschrieben, sehen wir genau die $2^2$ Multiplikationen, die d
 ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition auch durch eine Multiplikation und zwei Subtraktionen berechnen. Additionen und Subtraktionen haben typischerweise annähernd die gleiche Laufzeit.
 \end{remark}
 
-\begin{algorithm}[Karatsuba's algorithm]\label{alg:karatsuba}
+\begin{algorithm}[Karatsubas Algorithmus]
+    \label{alg:karatsuba}
     %! suppress = MissingLabel
     \begin{lstlisting}
     List<Digit> multiply(List<Digit> a, List<Digit> b) {
@@ -62,7 +63,7 @@ zu verwenden, denn da $0\leq a_0,a_1<G$ gilt, wird auch stets $\abs{a_1-a_0}<G$ 
 \end{remark}
 
 \begin{proposition}
-Algorithmus \ref{alg:karatsuba} ist korrekt, benötigt $O(n^{\log(3) / \log(2)})$ Multiplikationen, Additionen und Subtraktionen, sowie $O(n)$ Speicher.
+    Algorithmus~\ref{alg:karatsuba} ist korrekt, benötigt $O(n^{\log(3) / \log(2)})$ Multiplikationen, Additionen und Subtraktionen, sowie $O(n)$ Speicher.
 \end{proposition}
 \begin{proof}
 Die Abschätzungen ergeben sich direkt aus dem Mastertheorem (siehe Aufgabe \ref{ex:mastertheorem}), denn die Anzahl der Multiplikationen erfüllt die Rekursion $M(n) = 3 M(\frac{n}{2})$, die Anzahl der Additionen/Subtraktionen $A(n) = 3 A(\frac{n}{2})+2\frac{n}{2} + 3\cdot 2n$.
