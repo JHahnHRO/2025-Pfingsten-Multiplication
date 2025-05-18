@@ -41,6 +41,11 @@
 \begin{theorem}[Gauss, Cooley-Tukey uvm.]
     Ist $n$ eine Zweierpotenz, so ist möglich, die DFT eines Vektors $a\in\IC^n$ mit $n\log(n)$ komplexen Additionen und Multiplikationen und $n+O(1)$ Speicherbedarf zu berechnen.
 \end{theorem}
+
+\begin{remark}
+    Dieser Algorithmus wurde mehrfach wiederentdeckt. Die zugrundeliegende Idee war bereits Gauss bekannt, aber Gauss fand sie nicht wichtig genug, um sie zu veröffentlichen. Der Algorithmus wurde nach dem zweiten Weltkrieg mehrfach wiederentdeckt, aber auch dann ein paar Mal ohne die Erkenntnis, dass die geringe Komplexität etwas Besonderes und Veröffentlichungswürdiges ist.
+\end{remark}
+
 \begin{remark}
     Die Annahme, dass $n$ eine Zweierpotenz ist, ist in der Tat überflüssig. Sie ist nur für den konkreten Algorithmus nötig, den wir jetzt besprechen wollen. Es gibt andere Algorithmen, die für andere $n$ funktionieren und ebenfalls in $O(n\log(n))$ sind.
 \end{remark}
@@ -73,9 +78,9 @@
             && \IC[X]/(X^2-\underbrace{i}_{=\zeta_8^2}) \ar[ru]\ar[rd] & \\
             &&& \IC[X]/(X-\zeta_8^5) \\
             & \IC[X]/(X^4-\underbrace{(-1)}_{=\zeta_8^4}) \ar[ruu]\ar[rdd] && \\
-            &&& \IC[X]/(X^2-\zeta_8^3) \\
-            && \IC[X]/(X^2-\underbrace{(-i)}_{=\zeta_8^{3\cdot 3}}) \ar[ru]\ar[rd] & \\
-            &&& \IC[X]/(X^2-\zeta_8^7)
+            &&& \IC[X]/(X-\zeta_8^3) \\
+            && \IC[X]/(X^2-\underbrace{(-i)}_{=\zeta_8^{3\cdot 2}}) \ar[ru]\ar[rd] & \\
+            &&& \IC[X]/(X-\zeta_8^7)
         \end{tikzcd}
         \caption{FFT am Beispiel $n=8$}
         \label{fig:fft:example_n_equals_8}
@@ -84,21 +89,21 @@
     Man beachte, dass wir am Ende die Reduktionen auf die eindimensionalen Quotienten $\IC[X]/(X - \zeta_n^i)$ erhalten, also die Auswertung im Punkt $\zeta_n^i$, also genau die $i$-te Komponente der DFT\@.
 
     \medskip
-    Die Laufzeit dieses Algorithmus kommt daher, dass die Reduktion von $\IC[X]/(X^k-z^2)$ zu $\IC[X]/(X^{k/2}-z)$ mit $k/2$ komplexen Multiplikationen und Additionen erledigt werden kann:
+    Die Laufzeit dieses Algorithmus kommt daher, dass die Reduktion von $\IC[X]/(X^{2k}-z^2)$ zu $\IC[X]/(X^k-z)$ mit $k$ komplexen Multiplikationen und Additionen erledigt werden kann:
 
-    Wir schreiben eine Restklasse $[f] \in \IC[X]/(X^k-z^2)$ als Polynom vom Grad $\leq k-1$:
-    \[f \equiv f_0 + f_1 X + f_2 X^2 + \ldots f_{k-1}X^{k-1} \mod X^k-z^2\]
-    und gruppieren jetzt nach Koeffizienten größergleich bzw. kleiner als $k/2$:
+    Wir schreiben eine Restklasse $[f] \in \IC[X]/(X^{2k}-z^2)$ als Polynom vom Grad $\leq 2k-1$:
+    \[f \equiv f_0 + f_1 X + f_2 X^2 + \ldots f_{2k-1}X^{2k-1} \mod X^{2k}-z^2\]
+    und gruppieren jetzt nach Koeffizienten kleiner/größergleich $k$:
     \begin{align*}
-        f \equiv & (f_0     &+ f_1 X      &+ \ldots + f_{k/2-1}X^{k/2-1}) + \\
-        & (f_{k/2} &+ f_{k/2+1}X &+ \ldots + f_{k-1}X^{k/2-1})X^{k/2} \mod X^k-z^2
+        f \equiv & (f_0     &+ f_1 X      &+ \ldots + f_{k-1}X^{k-1}) + \\
+        & (f_k &+ f_{k+1}X &+ \ldots + f_{2k-1}X^{k-1})X^k \mod X^{2k}-z^2
     \end{align*}
-    Da wir dieses Polynom nun modulo $X^{k/2}-z$ reduzieren wollen, können wir $X^{k/2}$ durch die Konstante $z$ ersetzen:
-    \[f \equiv (f_0+f_{k/2}z) + (f_1+f_{k/2+1}z)X^1+(f_2+f_{k/2+2}z)X^2 + \ldots (f_{k/2}+f_{k-1}z)X^{k/2-1} \mod X^{k/2}-z\]
-    Das sind also genau $k/2$ komplexe Multiplikationen und $k/2$ Additionen, die wie für diese Reduktion benötigen.
+    Da wir dieses Polynom nun modulo $X^k-z$ reduzieren wollen, können wir $X^k$ durch die Konstante $z$ ersetzen:
+    \[f \equiv (f_0+f_k z) + (f_1+f_{k+1}z)X^1+(f_2+f_{k+2}z)X^2 + \ldots (f_{k}+f_{k-1}z)X^{k-1} \mod X^k-z\]
+    Das sind also genau $k$ komplexe Multiplikationen und $k$ Additionen, die wie für diese Reduktion benötigen.
 
     \medskip
-    In jedem Reduktionsschritt benötigen wir das zweimal: Wir reduzieren von $\IC[X]/(X^k-z^2) = \IC[X]/(X^k-(-z)^2)$ zu $\IC[X]/(X^{k/2}-z)$ und zu $\IC[X]/(X^{k/2}-(-z))$.
+    In jedem Reduktionsschritt benötigen wir das zweimal: Wir reduzieren von $\IC[X]/(X^{2k}-z^2) = \IC[X]/(X^{2k}-(-z)^2)$ zu $\IC[X]/(X^k-z)$ und zu $\IC[X]/(X^k-(-z))$.
     Das machen wir für mehrere $k$, sodass wir am Ende bei genau $n$ Additionen bzw. Multiplikationen in jeder Ebene der Rekursion landen.
 
     \medskip

@@ -5,7 +5,7 @@
 Über Jahrtausende ist keine Methode bekannt gewesen, wesentlich schneller als $O(n^2)$ zu multiplizieren. Erst 1960 wurde von Anatoly Karatsuba\footnote{russ. Mathematiker, 1937--2008} eine schnellere Methode entdeckt.
 
 \medskip
-Karatsubas Methode arbeitet rekursiv wie alle anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
+Karatsubas Methode arbeitet rekursiv wie viele anderen, die wir uns ansehen werden: Anstatt in der eigentlich beabsichtigten kleinen Zahlenbasis $g$ (z.B. $g=2$ oder $g=10$) zu arbeiten, werden die Zahlen zunächst bzgl. einer größeren Basis $G$ dargestellt. Um nun zwei Zahlen in Basis $G$ zu multiplizieren, sind mehrere Multiplikationen von Zahlen $<G$ zu erwarten. Diese werden rekursiv mit dem gleichen Algorithmus, aber bzgl. einer Basis $g\leq G'<G$ berechnet. Oft werden die anderen Basen $G,G', \ldots$ als Potenzen von $g$ gewählt, sodass keine zusätzliche Rechenarbeit notwendig ist, um zwischen $G$-Ziffern und $g$-Ziffern umzurechnen. Beispiel: Die Ziffern zur Basis $G=1000$ der Zahl $A=123456789$ sind $a_2=123, a_1=456, a_0=789$.
 
 \medskip
 Speziell für Karatsubas Methode wählt man $G$ groß genug, dass die beiden Inputs $A$ und $B$ nur noch aus zwei Ziffern bestehen. Für Zahlen mit zwei Ziffern $A=a_1G+a_0, B=b_1G+b_0$ gilt:
@@ -18,7 +18,7 @@ ist. Somit kann man $c_1$ anstatt mit zwei Multiplikationen und einer Addition a
 \begin{algorithm}[Karatsuba's algorithm]\label{alg:karatsuba}
     %! suppress = MissingLabel
     \begin{lstlisting}
-    Array<Digit> multiply(Array<Digit> a, Array<Digit> b) {
+    List<Digit> multiply(List<Digit> a, List<Digit> b) {
         int n := max(a.length, b.length);
         if(n <= CUTOFF){
             return slow_multiply(a,b); // algorithm A1

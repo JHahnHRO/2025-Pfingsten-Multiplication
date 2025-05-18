@@ -12,7 +12,7 @@
         \alpha(X) &= a_0 + a_1 X^1 + \ldots a_{n-1} X^{n-1}\\
         \beta(X)  &= b_0 + b_1 X^1 + \ldots b_{n-1} X^{n-1}
     \end{align*}
-    Berechnen $\alpha(\zeta_n^i)$ und $\beta(\zeta_n^i)$ für alle $i=0,1,\ldots,n-1$ in $O(n\log(n))$ mittels FFT. $\gamma(\zeta_n^i) = \alpha(\zeta_n^i)\cdot\beta(\zeta_n^i)$ auszurechnen, kostet noch einmal $n$ Multiplikationen. Die inverse Fourier-Transformation wird ebenfalls mit FFT in $O(n\log(n))$ ausgerechnet.
+    Berechnen $\alpha(\zeta_{2n}^i)$ und $\beta(\zeta_{2n}^i)$ für alle $i=0,1,\ldots,2n-1$ in $O(n\log(n))$ mittels FFT. $\gamma(\zeta_n^i) = \alpha(\zeta_n^i)\cdot\beta(\zeta_n^i)$ auszurechnen, kostet noch einmal $2n$ Multiplikationen. Die inverse Fourier-Transformation wird ebenfalls mit FFT in $O(n\log(n))$ ausgerechnet.
 
     Damit haben wir die Koeffizienten von $\gamma(X)$. Man beachte, dass die Koeffizienten von $\gamma$ exakt ganzzahlig sind, auch wenn die Zwischenergebnisse komplexe Zahlen waren!
 
@@ -32,7 +32,7 @@
 \end{remark}
 
 \begin{theorem}[Schönhage-Strassen I]
-    Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)\cdot\log(\log(n))^{1+\varepsilon})$ elementaren arithmetischen Operationen auf Ziffern möglich. Präziser kann man für jedes $k\in\IN$ die Komplexität
+    Multiplikation von zwei $n$-Bit Zahlen ist in $O(n\log(n)^{1+\varepsilon})$ elementaren arithmetischen Operationen auf Ziffern möglich. Präziser kann man für jedes $k\in\IN$ die Komplexität
     \[O(n\cdot \log(n) \cdot \log(\log(n)) \cdots (\log^k(n))^2)\]
     erreichen.
 \end{theorem}
@@ -40,7 +40,7 @@
 \begin{remark}
     Der FFT-Algorithmus, den wir betrachtet haben, ist nicht fundamental davon abhängig, dass mit komplexen Zahlen gerechnet wird. Man kann sich leicht davon überzeugen, dass man $\IC$ durch jeden kommutativen Ring $R$ ersetzen kann, der
     \begin{enumerate}
-        \item eine primitive $n$-te Einheitswurzel $\zeta_n$ enthält.
+        \item eine primitive $2n$-te Einheitswurzel $\zeta$ enthält.
         \item ein multiplikatives Inverses von $n$ enthält.
     \end{enumerate}
 
@@ -64,5 +64,5 @@
 
     Für die asymptotische Komplexität ist ein Faktor 2 nicht relevant, für die Praxis aber schon, da der Schönhage-Strassen-Algorithmus ja sowieso erst eingesetzt wird, wenn die Inputs sehr groß sind. \footnote{Cutoff in GMP liegt bei mehreren tausend Wörtern abhängig von der verwendeten Hardware}
 
-    Wenn wir also alleine unsere Inputs schon Kilo- und Megabytes groß sind, dann ist selbst ein konstanter Faktor im Speicherbedarf störend.
+    Wenn aber alleine unsere Inputs schon Kilo- und Megabytes groß sind, dann ist selbst ein konstanter Faktor im Speicherbedarf störend.
 \end{remark}
