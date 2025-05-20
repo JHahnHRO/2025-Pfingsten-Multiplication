@@ -13,8 +13,8 @@
     Multiplikation von $n$-Bit Zahlen ist in $\Theta(n\log(n))$ möglich.
 \end{conjecture}
 
-\begin{theorem}[Harvey\footnote{David Harvey, geb. 19??, australischer Mathematiker}-Hoeven\footnote{Joris van der Hoeven, geb. 1971, niederländischer Mathematik} \cite{harvey_hoeven}]
-    Multiplikation von $n$-Bit Zahlen ist in $O(n(log(n))$.
+\begin{theorem}[Harvey\footnote{David Harvey, geb. 19??, australischer Mathematiker}-Hoeven\footnote{Joris van der Hoeven, geb. 1971, niederländischer Mathematik}~\cite{harvey_hoeven}]
+    Multiplikation von $n$-Bit Zahlen ist in $O(n\log(n))$.
 \end{theorem}
 
 \begin{remark}
@@ -39,10 +39,6 @@
 \end{remark}
 
 \begin{remark}
-    Speziell für Primzahlen gibt es außerdem \enquote{Rader's trick}, der es erlaubt eine FFT der Länge $p$ auf eine FFT der Länge $p-1$ zurückzuführen. Dies ermöglicht weitere Freiheitsgrade bei der Wahl möglichst gut teilbarer Zahlen.
-\end{remark}
-
-\begin{remark}
     Wenn man in der Situation ist, eine multidimensionale $n_1\times n_2\times \cdots\times n_d$ FFT mit Zweierpotenzen $n_1\leq n_2\leq \ldots\leq n_d$ durchzuführen, dann kann man in jeder Dimension außer der letzten die FFT in $O(n_i)$ statt $O(n_i \log(n_i))$ durchführen, indem man anstatt einer komplexen Zahl (oder einem Element eines Restklassenrings) als Einheitswurzel die Unbekannte $X_d \in R[X_d]/(X_d^{n_d}-1)$ verwendet, die ja ebenfalls eine $n_d$-te Einheitswurzel ist. Das Multiplizieren mit einer Unbekannten ist in Polynomringen völlig gratis, da es nur die Koeffizienten herum permutiert.
 
     Wenn wir die $n_i$ alle in der Größenordnung $n^{1/d}$ wählen können, dann reduziert das den Aufwand für die FFTs von $\approx n\log(n)$ zu $\approx \frac{n\log(n)}{d}$.
@@ -53,10 +49,32 @@
 \end{remark}
 
 \begin{remark}
+    Speziell für Primfaktoren gibt es außerdem \enquote{Rader's trick}, der es erlaubt eine FFT der Länge $p$ auf eine FFT der Länge $p-1$ zurückzuführen. Dies ermöglicht weitere Freiheitsgrade bei der Wahl möglichst gut teilbarer Zahlen.
+
+    \medskip
+    Es ist jedoch effizienter, stattdessen einen \enquote{direkten} Weg von beliebigen Faktoren $n_i$ zu einer Zweierpotenz $2^{\ell_i} \approx n_i$ zu kommen und dann Cooley-Tukey-FFT anzuwenden.
+
+    Harvey \& von der Hoeven erreichen das durch \enquote{Gaussian resampling}. Die Grundidee ist es, den zu transformierenden Vektor $(a_0,a_1,\ldots,a_{n-1})\in\IC^n$ als Linearkombination
+    \[f(x) = \sum a_i f_i(x)\]
+    zu verstehen, wobei die $f_i$ Gauss-Glocken sind, die in $n$ äquidistante Punkte im Einheitsintervall $[0,1]$ zentriert sind, d.h. in $0,\frac{1}{n},\frac{2}{n},\ldots,\frac{n-1}{n}$.
+
+    Die Funktion $f$ kann Fourier transformiert werden, indem man sie stattdessen an $2^{\ell}$ äquidistanten Punkte in $[0,1]$ auswertet und diesen Vektor Fourier-transformiert.
+    \begin{figure}[htp]
+        \begin{tikzcd}
+            \IC^n \arrow[r,"DFT_n"] \arrow[d,"resampling"'] & \IC^n \\
+            \IC^{2^\ell} \arrow[r,"DFT_{2^{\ell}}"] & \IC^{2^\ell} \arrow[u,dotted]
+        \end{tikzcd}
+        \caption{Gaussian Resampling}
+        \label{fig:gaussian_resampling}
+    \end{figure}
+    Man kann effizient auch wieder von $\IC^{2^\ell}$ zu $\IC^n$ herunterrechnen, sodass man eine DFT der Länge $n$ durch eine FFT der Länge $2^\ell$ berechnen konnte.
+\end{remark}
+
+\begin{remark}
     Die Details sind sehr alle technisch und der Algorithmus, der dabei herauskommt, ist so komplex und hat so viel Overhead, dass er nur auf dem Papier interessant ist. Der Overhead ist so gigantisch, dass kein praktisches Problem groß genug ist, damit der Harvey-Hoeven-Algorithmus den Schönhage-Strassen-Algorithmus tatsächlich schlägt.
 
     \smallskip
-    Harvey und Hoeven selber schätzen, dass man Zahlen mit $\approx 10^{14}$ Ziffern benötigt, bevor sich ihr Algorithmus auszahlt.
+    Harvey und von der Hoeven selber schätzen, dass man Zahlen mit $\approx 10^{14}$ Ziffern benötigt, bevor sich ihr Algorithmus auszahlt.
 
     \medskip
     Während Schönhage-Strassen tatsächlich in Bibliotheken wie GMP implementiert ist und auch praktisch verwendet wird, ist mir (zum jetzigen Zeitpunkt) keine einzige Implementierung von Harvey-Hoeven bekannt.
