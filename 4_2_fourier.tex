@@ -66,24 +66,34 @@
     \medskip
     Am Beispiel von $n=8$ sieht das so aus wie in Abbildung~\ref{fig:fft:example_n_equals_8} dargestellt.
 
-    \begin{figure}[hpt]
-        \begin{tikzcd}[sep=tiny, inner sep=0]
-            &&& \IC[X]/(X-\zeta_8^0) \\
-            && \IC[X]/(X^2-\underbrace{1}_{=\zeta_8^0}) \ar[ru]\ar[rd] & \\
-            &&& \IC[X]/(X-\zeta_8^4) \\
-            & \IC[X]/(X^4-\underbrace{1}_{=\zeta_8^0}) \ar[ruu]\ar[rdd] && \\
-            &&& \IC[X]/(X-\zeta_8^2) \\
-            && \IC[X]/(X^2-\underbrace{(-1)}_{\zeta_8^{2\cdot 2}}) \ar[ru]\ar[rd] & \\
-            &&& \IC[X]/(X-\zeta_8^6) \\
-            \IC[X]/(X^8-\underbrace{1}_{=\zeta_8^0}) \ar[ruuuu] \ar[rdddd] & & \\
-            &&& \IC[X]/(X-\zeta_8) \\
-            && \IC[X]/(X^2-\underbrace{i}_{=\zeta_8^2}) \ar[ru]\ar[rd] & \\
-            &&& \IC[X]/(X-\zeta_8^5) \\
-            & \IC[X]/(X^4-\underbrace{(-1)}_{=\zeta_8^4}) \ar[ruu]\ar[rdd] && \\
-            &&& \IC[X]/(X-\zeta_8^3) \\
-            && \IC[X]/(X^2-\underbrace{(-i)}_{=\zeta_8^{3\cdot 2}}) \ar[ru]\ar[rd] & \\
-            &&& \IC[X]/(X-\zeta_8^7)
-        \end{tikzcd}
+    \begin{figure}[htp]
+        \centering
+        \begin{tikzpicture}
+            \node (C8)   at  (0,3) {$\frac{\IC[X]}{X^8-1}$};
+            \node (C4-1) at (-4,2) {$\frac{\IC[X]}{X^4-1}$};
+            \node (C4+1) at (+4,2) {$\frac{\IC[X]}{X^4+1}$};
+            \node (C2-1) at (-6,1) {$\frac{\IC[X]}{X^2-1}$};
+            \node (C2+1) at (-2,1) {$\frac{\IC[X]}{X^2+1}$};
+            \node (C2-i) at (+2,1) {$\frac{\IC[X]}{X^2-i}$};
+            \node (C2+i) at (+6,1) {$\frac{\IC[X]}{X^2+i}$};
+            \node (C1-1) at (-7,-0.5) {$\frac{\IC[X]}{X-1}$};
+            \node (C1+1) at (-5,-0.5) {$\frac{\IC[X]}{X+1}$};
+            \node (C1-i) at (-3,-0.5) {$\frac{\IC[X]}{X-i}$};
+            \node (C1+i) at (-1,-0.5) {$\frac{\IC[X]}{X+i}$};
+            \node (C1-z1) at (1,-0.5) {$\frac{\IC[X]}{X-\zeta_8}$};
+            \node (C1+z1) at (3,-0.5) {$\frac{\IC[X]}{X-\zeta_8^5}$};
+            \node (C1-z3) at (5,-0.5) {$\frac{\IC[X]}{X-\zeta_8^3}$};
+            \node (C1+z7) at (7,-0.5) {$\frac{\IC[X]}{X-\zeta_8^7}$};
+
+            \draw[->]
+            (C8) edge (C4-1) edge (C4+1)
+            (C4-1) edge (C2-1) edge (C2+1)
+            (C4+1) edge (C2-i) edge (C2+i)
+            (C2-1) edge (C1-1) edge (C1+1)
+            (C2+1) edge (C1-i) edge (C1+i)
+            (C2-i) edge (C1-z1) edge (C1+z1)
+            (C2+i) edge (C1-z3) edge (C1+z7);
+        \end{tikzpicture}
         \caption{FFT am Beispiel $n=8$}
         \label{fig:fft:example_n_equals_8}
     \end{figure}
@@ -109,7 +119,33 @@
     Das machen wir für mehrere $k$, sodass wir am Ende bei genau $n$ Additionen bzw. Multiplikationen in jeder Ebene der Rekursion landen.
 
     \medskip
-    Dass der Speicherbedarf $O(n)$ ist, folgt daraus, dass wir in jedem Reduktionsschritt die Anzahl der Faktoren verdoppeln, aber jeder Faktor nur noch halb so groß ist. Im Beispiel $n=8$ beginnen wir etwa mit einem Vektor der Länge $8$, reduzieren auf zwei Vektoren der Länge $4$, reduzieren auf vier Vektoren der Länge $2$ und schließlich acht Vektoren der Länge $1$. Für jede neue Ebene der Rekursion benötigen wir nur Speicher für genau $n$ neue komplexe Zahlen.
+    Dass der Speicherbedarf $O(n)$ ist, folgt daraus, dass wir in jedem Reduktionsschritt die Anzahl der Faktoren verdoppeln, aber jeder Faktor nur noch halb so groß ist. Wir starren eine Weile auf Abbildung~\ref{fig:fft:memory_n_equals_8} um uns das klarzumachen. Im Beispiel $n=8$ beginnen wir etwa mit einem Vektor der Länge $8$, reduzieren auf zwei Vektoren der Länge $4$, reduzieren auf vier Vektoren der Länge $2$ und schließlich acht Vektoren der Länge $1$. Für jede neue Ebene der Rekursion benötigen wir nur Speicher für genau $n$ neue komplexe Zahlen.
+    \begin{figure}[htb]
+        \begin{tabular}{|C{0.125}|C{0.125}|C{0.125}|C{0.125}|C{0.125}|C{0.125}|C{0.125}|C{0.125}|}
+            \hline
+            \multicolumn{8}{|c|}{ \cellcolor{red}{$\IC[X]/(X^8-1)$} } \\
+            \hline
+            \multicolumn{4}{|c|}{ \cellcolor{red!75} {$\IC[X]/(X^4-1)$} } &
+            \multicolumn{4}{|c|}{ \cellcolor{blue!75}{$\IC[X]/(X^4+1)$} } \\
+            \hline
+            \multicolumn{2}{|c|}{ \cellcolor{red!40}              {$\IC[X]/(X^2-1)$} } &
+            \multicolumn{2}{|c|}{ \cellcolor{red!67!blue!50!white}{$\IC[X]/(X^2+1)$} } &
+            \multicolumn{2}{|c|}{ \cellcolor{red!33!blue!50!white}{$\IC[X]/(X^2-i)$} } &
+            \multicolumn{2}{|c|}{ \cellcolor{blue!40}             {$\IC[X]/(X^2+i)$} } \\
+            \hline
+            \cellcolor{red!25}              {$\frac{\IC[X]}{X-1}$} &
+            \cellcolor{red!85!blue!25!white}{$\frac{\IC[X]}{X+1}$} &
+            \cellcolor{red!70!blue!25!white}{$\frac{\IC[X]}{X-i}$} &
+            \cellcolor{red!65!blue!25!white}{$\frac{\IC[X]}{X+1}$} &
+            \cellcolor{red!45!blue!25!white}{$\frac{\IC[X]}{X-\zeta_8}$} &
+            \cellcolor{red!30!blue!25!white}{$\frac{\IC[X]}{X-\zeta_8^5}$} &
+            \cellcolor{red!15!blue!25!white}{$\frac{\IC[X]}{X-\zeta_8^3}$} &
+            \cellcolor{blue!25!white}       {$\frac{\IC[X]}{X-\zeta_8^7}$} \\
+            \hline
+        \end{tabular}
+        \caption{Speichernutzung}
+        \label{fig:fft:memory_n_equals_8}
+    \end{figure}
 
     Wenn wir die $n$ Zahlen der vorherigen Level wegwerfen, nachdem wir sie nicht mehr benötigen, kommen wir mit Speicher für $2n$ Zahlen aus. Wenn wir die Formel genau angucken, sehen wir, dass wir immer die $i$-ten Koeffizienten der beiden Reduktionen aus dem $i$-ten und $(i+k)$-ten Koeffizient des Inputs berechnen. Das heißt, dass wir den Input einfach direkt mit dem Ergebnis überschreiben können und mit $n+O(1)$ Speicher auskommen.
 \end{proof}
