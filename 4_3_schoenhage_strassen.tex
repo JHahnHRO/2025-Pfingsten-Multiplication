@@ -1,11 +1,16 @@
 % !TeX root = main.tex
 % !TeX spellcheck = de_DE
 
-\subsection{Der Schönhage-Strassen-Algorithmus}\label{schoenhage-strassen}
-
-\begin{corollary}
-    Die Multiplikation zweier Zahlen $A,B\in\IZ$ mit $n$ Ziffern kann mit $O(n\log(n))$ arithmetischen Operationen auf komplexen Zahlen und Speicher für $O(n)$ komplexe Zahlen berechnet werden.
-\end{corollary}
+\begin{minipage}[l]{12cm}
+    \subsection{Der Schönhage-Strassen-Algorithmus}\label{schoenhage-strassen}
+    \begin{corollary}
+        Die Multiplikation zweier Zahlen $A,B\in\IZ$ mit $n$ Ziffern kann mit $O(n\log(n))$ arithmetischen Operationen auf komplexen Zahlen und Speicher für $O(n)$ komplexe Zahlen berechnet werden.
+    \end{corollary}
+\end{minipage}\hfill
+\begin{minipage}{2cm}
+    \setlength{\baselineskip}{7pt}
+    \includegraphics[width=2cm]{levelup_goku}
+\end{minipage}
 \begin{proof}
     Mittels FFT ist es jetzt klar wie es geht: Wir nutzen die Ziffern von $A$ und $B$ als Koeffizienten von Polynomen
     \begin{align*}
