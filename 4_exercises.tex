@@ -68,9 +68,10 @@
             Folgere, dass man mit $O(\log(n))$ Bits Genauigkeit rechnen muss, um ganze Zahlen mit $n$ Bits mittels komplexer FFT zu multiplizieren.
         \end{subproblem}
         \begin{subproblem}
-            Folgere daraus den ersten Satz von Schönhage-Strassen, dass man ganze Zahlen in $O(n\log(n)^2)$ elementaren Operationen multiplizieren kann.
-
-            Überzeuge dich insbesondere davon, dass man auch innerhalb von $O(n\log(n))$ die für die FFT benötigten Einheitswurzeln auf $O(\log(n))$ Nachkommastellen genau berechnen kann.
+            Folgere daraus, dass man ganze Zahlen in $O(n\log(n)^3)$ elementaren Operationen multiplizieren kann.
+        \end{subproblem}
+        \begin{subproblem}
+            Zeige, dass es auch in $O(n\log(n)^2)$ geht, indem statt in Basis $g=2$ in einer größeren Basis $G$ gerechnet wird.
         \end{subproblem}
         \begin{subproblem}
             Folgere daraus wiederum per Induktion, dass es auch in

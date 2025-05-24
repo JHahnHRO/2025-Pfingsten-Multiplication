@@ -3,21 +3,73 @@
 
 \begin{sheet}
 
-\begin{problem}[title={Mastertheorem}]\label{ex:mastertheorem}
-Beweise das \emph{Mastertheorem für divide-and-conquer-Algorithmen}:
+    \begin{problem}[title={Mastertheorem}]
+        \label{ex:mastertheorem}
+        Beweise das \emph{Mastertheorem für divide-and-conquer-Algorithmen}:
 
-Gegeben sei eine Rekursion der Form
-\[T(n) = a T\left(\frac{n}{b}\right) + f(n)\]
-für Zahlen $a,b>1$ und eine nichtnegative Funktion $f$. Definiere $c_0 := \frac{\log(a)}{\log(b)}$. Zeige:
-\begin{subproblem}[difficulty={leicht}]
-Wenn $f\in O(n^c)$ mit $c<c_0$, dann ist $T\in\Theta(n^{c_0})$. Speziell für $f(n) := d n^c$ ist sogar $T(n) = k_0 n^{c_0} + k n^c$ mit geeigneten Konstanten $k_0,k$.
-\end{subproblem}
-\begin{subproblem}[difficulty={leicht}]
-Wenn $f\in O(n^{c_0}\log(n)^k)$ mit $k\geq 0$, dann ist $T\in O(n^{c_0} \log(n)^{k+1})$.
-\end{subproblem}
-\begin{subproblem}[difficulty={mittel}]
-Wenn $f\in o(n^c)$ mit $c>c_0$, dann ist $T\in o(n^c)$. Wenn zusätzlich $a f(\frac{n}{b})\leq k f(n)$ für eine Konstante $0\leq k<1$ und alle hinreichend großen $n$ gilt, dann ist $T\in\Theta(f)$.
-\end{subproblem}
-\end{problem}
+        Gegeben sei eine Rekursion der Form
+        \[T(n) = a T\left(\frac{n}{b}\right) + f(n)\]
+        für Zahlen $a,b>1$ und eine nichtnegative Funktion $f$. Definiere $c_0 := \frac{\log(a)}{\log(b)}$. Zeige:
+        \begin{subproblem}[difficulty={leicht}]
+            Wenn $f\in O(n^c)$ mit $c<c_0$, dann ist $T\in\Theta(n^{c_0})$. Speziell für $f(n) := d n^c$ ist sogar $T(n) = k_0 n^{c_0} + k n^c$ mit geeigneten Konstanten $k_0,k$.
+        \end{subproblem}
+        \begin{subproblem}[difficulty={leicht}]
+            Wenn $f\in O(n^{c_0}\log(n)^k)$ mit $k\geq 0$, dann ist $T\in O(n^{c_0} \log(n)^{k+1})$.
+        \end{subproblem}
+        \begin{subproblem}[difficulty={mittel}]
+            Wenn $f\in o(n^c)$ mit $c>c_0$, dann ist $T\in o(n^c)$. Wenn zusätzlich $a f(\frac{n}{b})\leq k f(n)$ für eine Konstante $0\leq k<1$ und alle hinreichend großen $n$ gilt, dann ist $T\in\Theta(f)$.
+        \end{subproblem}
+    \end{problem}
+
+    \begin{problem}
+        Wende das Mastertheorem auf das Beispiel von Sortieralgorithmen an: Viele Sortieralgorithmen wie Heapsort, Mergesort, Quicksort, \ldots arbeiten nach folgendem Prinzip:
+        \begin{enumerate}
+            \item Teile die zu sortierende Liste in zwei Hälften
+            \item sortiere die beiden Hälften mittels rekursiver Anwendung des gleichen Algorithmus
+            \item Iteriere einmal über beide (nun sortierte) Teillisten um eine sortierte Gesamtliste zu erstellen.
+        \end{enumerate}
+        Zeige, dass alle diese Sortieralgorithmen Zeitkomplexität $O(n\log(n))$ haben.
+    \end{problem}
+
+    \begin{problem}[title={Strassens Matrixmultiplikationsalgorithmus}]
+        Analog zu Karatsubas Trick für Multiplikation ganzer Zahlen gibt es Strassens Trick für Multiplikation von $2\times 2$-Matrizen $A,B$: Wenn wir das Produkt mit $X$ bezeichnen, also
+        \[ \begin{pmatrix}
+               X_{11} & X_{12} \\ X_{21} & X_{22}
+        \end{pmatrix} :=
+        \begin{pmatrix}
+            A_{11} & A_{12} \\ A_{21} & A_{22}
+        \end{pmatrix} \cdot
+        \begin{pmatrix}
+            B_{11} & B_{12} \\ B_{21} & B_{22}
+        \end{pmatrix} = \begin{pmatrix}
+                            A_{11} B_{11}+ A_{12} B_{21}  & A_{11} B_{12} + A_{12} B_{22} \\
+                            A_{21} B_{11} + A_{22} B_{21} & A_{21} B_{12} +A_{22} B_{22}
+        \end{pmatrix}\]
+        dann gilt
+        \[\begin{pmatrix}
+              X_{11} & X_{12} \\ X_{21} & X_{22}
+        \end{pmatrix} =
+        \begin{pmatrix}
+            M_1 + M_4 - M_5 + M_7 & M_3 + M_5             \\
+            M_2 + M_4             & M_1 - M_2 + M_3 + M_6
+        \end{pmatrix}\]
+        wobei
+        \begin{align*}
+            M_1 &:= (A_{11} + A_{22}) \cdot (B_{11} + B_{22}) \\
+            M_2 &:= (A_{21} + A_{22}) \cdot B_{11} \\
+            M_3 &:= A_{11} \cdot (B_{12} - B_{22}) \\
+            M_4 &:= A_{22} \cdot (B_{21} - B_{11}) \\
+            M_5 &:= (A_{11} + A_{12}) \cdot B_{22} \\
+            M_6 &:= (A_{21} - A_{11}) \cdot (B_{11} + B_{12}) \\
+            M_7 &:= (A_{12} - A_{22}) \cdot (B_{21} + B_{22}) \\
+        \end{align*}
+        Daraus ergibt sich ein divide-and-conquer-Algorithmus, naheligenderweise \enquote{Strassen-Algorithmus} genannt. Bestimme die Laufzeit- und Speicherkomplexität dieses Algorithmus.
+    \end{problem}
+
+    \begin{remark}
+        Um $n\times n$-Matrizen zu multiplizieren genügen also $7$ Multiplikationen von $\frac{n}{2}\times\frac{n}{2}$-Matrizen. Indem man Strassens Trick zweimal anwendet, kann man also auch $7^2=49$ Multiplikationen von $\frac{n}{4}\times\frac{n}{4}$-Matrizen verwenden.
+
+        Google hat nur wenige Tage vor unserem Kurs bekannt gegeben, dass deren AI \enquote{AlphaEvolve} ein gewisses Optimierungsproblem lösen konnte und dabei zu dem Ergebnis gekommen ist, dass man mit nur $48$ Multiplikationen auskommt, was einen leicht besseren Algorithmus als Strassens ergibt; der Exponent ist ca. 0,53\% kleiner. \cite{googleAlphaEvolve}
+    \end{remark}
 
 \end{sheet}

@@ -1,0 +1,61 @@
+% !TeX root = main.tex
+% !TeX spellcheck = de_DE
+
+\begin{sheet}
+    \begin{problem}
+        Betrachte den folgenden Algorithmus für Multiplikation von $l\times m$- und $m\times n$-Matrizen.
+        \begin{lstlisting}
+Matrix multiply(Matrix a, Matrix b){
+    int l = nrOfRows(a);
+    int m = nrOfColumns(a);
+    if(m != nrOfRows(b)){
+        throw new ArithmeticException("Matrix multiplication undefined");
+    }
+    int n = nrOfColumns(b);
+
+    var C = new Matrix(l,n);
+
+    for(int i=0; i<l; i++){
+        for(int j=0; j<n; j++){
+            for(int k=0; k<m; k++){
+                C[i,j] += A[i,k] * B[k,j];
+            }
+        }
+    }
+    return C;
+}
+        \end{lstlisting}
+
+        Welche Laufzeit- und Speicher-Komplexität hat dieser Algorithmus um zwei $n\times n$-Matrizen miteinander zu multiplizieren?
+    \end{problem}
+
+    \begin{problem}[title={Ein paar übliche Komplexitätsklassen}]
+        \begin{subproblem}
+            Es seien $r,s$ reelle Zahlen. Zeige
+            \[r<s \implies O(n^r) \subsetneq O(n^s)\]
+            Zeige insbesondere, dass dies eine echte Inklusion ist, d.h.\ dass es eine Funktion $g\in O(n^s) \setminus O(n^r)$ gibt.
+        \end{subproblem}
+        \begin{subproblem}
+            Zeige $\log(n),\log(\log(n)), \log(\log(\log(n))), \ldots \in O(n^\varepsilon)$ für jedes $\varepsilon>0$.
+        \end{subproblem}
+        \begin{subproblem}
+            Zeige $n^r \in O(c^n)$ für jedes $r>0$ und $c>1$.
+        \end{subproblem}
+    \end{problem}
+
+    \begin{problem}
+        Es seien $f,g,F,G:\IN\to\IR_{\geq 0}$ Funktionen mit $f\in O(F), g\in O(G)$.
+        \begin{subproblem}
+            Zeige, dass $f+g\in O(F+G)$.
+        \end{subproblem}
+        \begin{subproblem}
+            Zeige, dass $f\cdot g\in O(F\cdot G)$.
+        \end{subproblem}
+        \begin{subproblem}
+            Folgere, dass $\log(n)^r, \log(\log(n))^r, \log(\log(\log(n)))^r, \ldots$ alle in $O(n^\varepsilon)$ sind für jedes $\varepsilon>0$.
+
+            Folgere allgemeiner, dass Funktionen der Form $n^s\cdot \log(n)^{r_1} \cdot \log(\log(n))^{r_2} \cdot \log(\log\log(n))^{r_2}\cdots$ alle in $O(n^{s+\varepsilon})$ sind für jedes $\varepsilon>0$.
+        \end{subproblem}
+    \end{problem}
+
+\end{sheet}
