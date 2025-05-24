@@ -4,5 +4,6 @@
     <inspection_tool class="LatexLabelConvention" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="LatexLineBreak" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="LatexVerticallyCenteredColon" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="NonAsciiCharacters" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>
 </component>

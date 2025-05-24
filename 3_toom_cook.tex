@@ -142,7 +142,7 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
 \end{proof}
 
 \begin{remark}
-    Wir benötigen $O(k^2)$ viele Multiplikationen/Divisionen mit kleinen Konstanten. Die $O$-Konstante in $O(n)$ für die Multiplikationen/Divisionen hängt aber empfindlich davon ab, welche Konstanten das genau sind. Auch wenn es für die asymptotische Laufzeit nicht relevant ist, muss man sich also doch etwas Mühe geben bei der Wahl der Sützstellen.
+    Wir benötigen $O(k^2)$ viele Multiplikationen/Divisionen mit kleinen Konstanten. Die $O$-Konstante in $O(n)$ für die Multiplikationen/Divisionen hängt aber empfindlich davon ab, welche Konstanten das genau sind. Auch wenn es für die asymptotische Laufzeit nicht relevant ist, muss man sich also doch etwas Mühe geben bei der Wahl der Stützstellen.
 
     \smallskip
     Besonders einfach ist es, Polynome in $X=0$ auszuwerten, weil dafür gar keine Rechnung notwendig ist, also wählt man $0$ immer als eine der Stützstellen. Ebenfalls kostenlos ist die \enquote{Auswertung bei $X=\infty$}. Damit meint man für ein Polynom vom Grad $d$ die Berechnung von $\lim_{x\to\infty} \frac{p(x)}{x^d}$, was genau den führenden Koeffizienten des Polynoms ergibt. In unserer Notation also $a_{k-1}$, $b_{k-1}$ bzw. $\gamma_{2k-2}$. Man kann sich leicht überlegen, dass $\gamma(\infty)=\alpha(\infty)\beta(\infty)$ ebenfalls erfüllt ist, sodass unsere Rechnung trotzdem funktionieren.
