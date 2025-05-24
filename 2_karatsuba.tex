@@ -7,8 +7,8 @@
     \end{remark}
 \end{minipage}\hfill
 \begin{minipage}{4cm}
-\setlength{\baselineskip}{7pt}
-\includegraphics[width=4cm]{levelup_mario}
+    \setlength{\baselineskip}{7pt}
+    \includegraphics[width=4cm]{levelup_mario}
 \end{minipage}
 
 \footnotetext[{\numexpr\value{footnote}-2\relax}]{Andrey Nikolaevich Kolmogorov, 1903--1987, russ. Mathematiker}
@@ -56,9 +56,9 @@
     In der Praxis wählt man den Cutoff nicht so klein wie möglich, um möglichst viel mit der \enquote{besseren} Karatsuba-Methode zu arbeiten, sondern ein kleines bisschen größer, da für sehr kleine Anzahlen von Ziffern die Schul-Methode in der Praxis doch schneller ist als die Karatsuba-Methode. Selbst wenn nur einer der beiden Faktoren wenig Ziffern hat, insbesondere wenn ein Faktor nur eine Ziffer hat, ist die Schul-Methode schneller.
 
     \smallskip
-    Die Standard-Library von Java nutzt beispielsweise $g=2^{32}$ als Basis, d.h. 32-bit Integer werden direkt per Hardware-Instruktion multipliziert, und $n=80$ als Cutoff\footnote{Diese Zahlen sind Implementierungsdetails, die sich von einer Java-Version zur nächsten auch mal ändern können. Ich habe sie im OpenJDK 21 geprüft. Wer selbst nachschauen will: Es geht um die Klasse \texttt{java.math.BigInteger} und ihre Methode \texttt{multiply(BigInteger)}.}: Sobald einer der Faktoren weniger als $80$ Worte groß ist, wird mit der Schul-Methode multipliziert.
+    Die Standard-Library von Java (siehe~\cite{openjdk21}) nutzt beispielsweise $g=2^{32}$ als Basis, d.h.\ 32-bit Integer werden direkt per Hardware-Instruktion multipliziert, und $n=80$ als Cutoff\footnote{Diese Zahlen sind Implementierungsdetails, die sich von einer Java-Version zur nächsten auch mal ändern können. Ich habe sie im OpenJDK 21 geprüft. Wer selbst nachschauen will: Es geht um die Klasse \texttt{java.math.BigInteger} und ihre Methode \texttt{multiply(BigInteger)}.}: Sobald einer der Faktoren weniger als $80$ Worte groß ist, wird mit der Schul-Methode multipliziert.
 
-    Die C-Bibliothek GMP (GNU Multiprecision Arithmetic library) definiert den Cutoff hardware-abhängig zwischen $n=10$ und $34$ Wörtern, z.B. $n=26$ für ARM64 Apple's M1 Prozessor.
+    Die C-Bibliothek GMP (GNU Multiprecision Arithmetic library) definiert den Cutoff hardware-abhängig zwischen $n=10$ und $34$ Wörtern, z.B. $n=27$ für x64 Prozessoren (siehe~\cite{gmp6}).
 \end{remark}
 
 \begin{remark}

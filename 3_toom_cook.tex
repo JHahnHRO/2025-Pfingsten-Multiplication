@@ -2,9 +2,9 @@
 % !TeX spellcheck = de_DE
 
 \begin{minipage}[l]{9cm}
-\begin{remark}
-    Der nächste große Durchbruch kam schnell nach Karatsuba: 1963 bereits beschrieb Toom\footnotemark{} eine Verallgemeinerung von Karatsubas Algorithmus; 1966 beschrieb Cook\footnotemark{} eine vereinfachte Version, die heutzutage Toom-Cook-Algorithmus genannt wird.
-\end{remark}
+    \begin{remark}
+        Der nächste große Durchbruch kam schnell nach Karatsuba: 1963 bereits beschrieb Toom\footnotemark{} eine Verallgemeinerung von Karatsubas Algorithmus; 1966 beschrieb Cook\footnotemark{} eine vereinfachte Version, die heutzutage Toom-Cook-Algorithmus genannt wird.
+    \end{remark}
 \end{minipage}\hfill
 \begin{minipage}{5cm}
     \setlength{\baselineskip}{7pt}
@@ -126,7 +126,7 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
 
     return result;
 }
-\end{lstlisting}
+    \end{lstlisting}
 \end{algorithm}
 
 \begin{proposition}[Toom \cite{toom}, Cook \cite{cook}]
@@ -186,5 +186,5 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
     Die\footnote{Wieder OpenJDK 21 in diesem Fall; andere Implementierungen der Standardbibliothek könnten theoretisch davon abweichen} Java Implementierung wählt z.B. $n=240$ als Cutoff, d.h. erst wenn beide Faktoren mehr als 240 Worte groß sind, wird die Toom-Cook-$3$-Multiplikation gegenüber der Karatsuba-Methode bevorzugt. Ein höheres $k$ wird gar nicht verwendet in der Implementierung.
 
     \smallskip
-    GMP verwendet $k\leq 8$ in gewissen Grenzen und den (asymptotisch noch schnelleren) Schönhage-Strassen-Algorithmus darüber.
+    GMP verwendet $k\leq 8$ in gewissen Grenzen bis zu ein paar tausend Worten und den (asymptotisch noch schnelleren) Schönhage-Strassen-Algorithmus darüber.
 \end{remark}
