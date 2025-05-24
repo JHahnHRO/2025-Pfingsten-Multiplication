@@ -149,3 +149,9 @@
 
     Wenn wir die $n$ Zahlen der vorherigen Level wegwerfen, nachdem wir sie nicht mehr benötigen, kommen wir mit Speicher für $2n$ Zahlen aus. Wenn wir die Formel genau angucken, sehen wir, dass wir immer die $i$-ten Koeffizienten der beiden Reduktionen aus dem $i$-ten und $(i+k)$-ten Koeffizient des Inputs berechnen. Das heißt, dass wir den Input einfach direkt mit dem Ergebnis überschreiben können und mit $n+O(1)$ Speicher auskommen.
 \end{proof}
+
+\begin{remark}
+    Der Beweis ist hinreichend konstruktiv, um daraus einen echten FFT-Algorithmus abzuleiten, den man auch implementieren kann.
+    \medskip
+    Eine kleine Lücke muss man dafür noch schließen: Man muss sich überzeugen, dass man die für die Rekursion notwendigen Einheitswurzeln $\zeta_n, \zeta_n^2, \zeta_n^4, \ldots, \zeta_n^{n/4} = i, \zeta_n^{n/2}=1, \zeta_n^n=1$ in $O(n\log(n))$ berechnen kann.
+\end{remark}
