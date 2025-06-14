@@ -11,11 +11,11 @@
     \begin{problem}[title={FFT ist numerisch stabil}]
         Zeige, dass im Cooley-Tukey-Algorithmus $O(\log(n))$ Nachkommastellen an Genauigkeit verloren gehen:
 
-        Es sei $n=2^\ell$ eine Zweierpotenz, $(a_0,\ldots,a_{n-1})\in\IC^n$ der Vektor, den wir fourier-transformieren wollen und $(b_0, \ldots, b_{n-1})\in\IC^n$ eine Näherung an $a$ mit $\abs{a_j-b_j}\leq 2^{-m}$. OBdA nehmen wir $\abs{a_j}, \abs{b_j} < 1$ an.
+        Es sei $n=2^\ell$ eine Zweierpotenz, $(a_0,\ldots,a_{n-1})\in\IC^n$ der Vektor, den wir fourier-transformieren wollen und $(b_0, \ldots, b_{n-1})\in\IC^n$ eine Näherung an $a$ mit $\abs{a_j-b_j} < 2^{-m}$. OBdA nehmen wir $\abs{a_j}, \abs{b_j} < 1$ an.
 
         \begin{subproblem}
             Zeige, dass für die fourier-transformierten Vektoren $(\hat{a}_0,\ldots,\hat{a}_{n-1})$ bzw. $(\hat{b}_0,\ldots,\hat{b}_{n-1})$ gilt:
-            \[\abs{\hat{a}_j - \hat{b}_j} \leq 2^{-m+c}\]
+            \[\abs{\hat{a}_j - \hat{b}_j} < 2^{-m+c\log(n)}\]
             mit einer Konstanten $c\geq 1$, d.h.\ pro Rekursionsstufe gehen $c$ viele Bits an Genauigkeit verloren.
         \end{subproblem}
         \begin{subproblem}

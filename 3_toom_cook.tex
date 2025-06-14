@@ -74,16 +74,16 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
 
     for(int m:=0; m<k; m++) {
         // not an actual computation, only a naming convention
-        alpha[m] := a[m*n_prime .. (m+1)n_prime-1];
-        beta[m]  := b[m*n_prime .. (m+1)n_prime-1];
+        alpha[m] := a[m*n_prime .. (m+1)*n_prime-1];
+        beta[m]  := b[m*n_prime .. (m+1)*n_prime-1];
     }
 
     // Step 1: evaluate alpha and beta at the chosen points
-    eval_alpha := new List<>(2k-1); // each list entry is itself
-    eval_beta  := new List<>(2k-1); // a list of n'+O(1) digits
+    eval_alpha := new List<>(2*k-1); // each list entry is itself
+    eval_beta  := new List<>(2*k-1); // a list of n'+O(1) digits
 
     // Matrix multiplication E*alpha and E*beta
-    for(int l:=0; l<2k-1; l++) {
+    for(int l:=0; l<2*k-1; l++) {
         for(int m:=0; m<k; m++) {
             // multiplications with small, known constants
             // => no recursion necessary here
@@ -99,17 +99,17 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
     // each of the entries if itself a list of 2n'+O(1) digits
     eval_gamma := new List<>(2k-1);
 
-    for(int l:=0; l<2k-1; l++) {
+    for(int l:=0; l<2*k-1; l++) {
         // recursion here
         eval_gamma[l] := multiply(eval_alpha[l], eval_beta[l]);
     }
 
     // Step 3: recover coefficients of gamma
-    gamma := new List<Digit>(2k-1);
+    gamma := new List<Digit>(2*k-1);
 
     // Matrix multiplication I*gamma
-    for(int l:=0; l<2k-1; l++) {
-        for(int m:=0; m<2k-1; m++) {
+    for(int l:=0; l<2*k-1; l++) {
+        for(int m:=0; m<2*k-1; m++) {
             // multiplication with constant rationals, i.e.
             // multiplication and division with small, known constants
             // => no recursion necessary here
@@ -119,8 +119,8 @@ List<Digit> multiply(List<Digit> a, List<Digit> b) {
     }
 
     // Step 4: evaluate gamma(g^k)
-    result := new List<Digit>[2n];
-    for(int l=0: l<2k-1; l++) {
+    result := new List<Digit>[2*n];
+    for(int l=0: l<2*k-1; l++) {
         result[l*n_prime...] := add(result[l*n_prime...], gamma[l]);
     }
 
